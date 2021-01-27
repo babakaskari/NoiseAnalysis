@@ -1,0 +1,9 @@
+dataset/
+data/
+/data
+/dataset
+*.wav
+*.csv
+*.pickle
+/result/*
+/dataset/*
