@@ -47,13 +47,13 @@ def evaluate_preds(model, x_train, y_train,  x_true, y_true):
     cross_validation_score = cross_val_score(model, x_train, y_train, cv=6)
     print("Cross validation score : ", cross_validation_score)
     cross_validation_predict = cross_val_predict(model, x_train, y_train, cv=6)
-    print("Cross validation predict : ", cross_validation_predict)
+    # print("Cross validation predict : ", cross_validation_predict)
     cross_val_accuracy = np.mean(cross_validation_score) * 100
     print("cross validation accuracy : ", cross_val_accuracy)
     # ROC
-    print("pred_probality : ", pred_probality, "length of prediction prob : ", len(pred_probality))
+    # print("pred_probality : ", pred_probality, "length of prediction prob : ", len(pred_probality))
     y_probs_positive = pred_probality[:, 1]
-    print("y_probs_positive : ", y_probs_positive)
+    # print("y_probs_positive : ", y_probs_positive)
     fpr, tpr, thresholds = roc_curve(y_true, y_probs_positive)
     print("fpr : ", fpr)
     print("roc_auc_score : ", roc_auc_score(y_true, y_probs_positive))

@@ -24,8 +24,8 @@ loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)
 dataset = loaded_object
-print("dataset : ", dataset)
-#
+# print("dataset : ", dataset)
+print("dataset shpae : ", dataset.shape)
 # dataset = preprocessed_mimi.preprocessing_mimi()
 # x_train = dataset["x_train"]
 # y_train = dataset["y_train"]
