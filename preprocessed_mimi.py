@@ -5,6 +5,7 @@ import pickle
 import os
 import sys
 import glob
+from tqdm import tqdm
 ########################################################################
 
 
@@ -82,7 +83,7 @@ for idx in range(len(train_files)):
 
     except ValueError as msg:
         logger.warning(f'{msg}')
-df_train = df_train.abs()
+# df_train = df_train.abs()
 x_train = df_train.reset_index()
 # print("x_train : ", x_train)
 # # print("x_train median : ", x_train.median(axis=1))
@@ -95,16 +96,18 @@ for idx in range(len(test_files)):
         multi_channel_data, sr = librosa.load(test_files[idx], sr=None, mono=True)
 
         if i != 0:
+            # print(i)
             df1 = pd.DataFrame(multi_channel_data.reshape(1, -1))
             df_test = df_test.append(df1)
 
         else:
+            # print(i)
             df_test = pd.DataFrame(data=multi_channel_data.reshape(1, -1))
             i = i + 1
 
     except ValueError as msg:
         logger.warning(f'{msg}')
-df_test = df_test.abs()
+# df_test = df_test.abs()
 x_test = df_test.reset_index()
 # print("x_test : ", x_test)
 # print("y_test : ", y_test)
