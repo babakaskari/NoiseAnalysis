@@ -62,6 +62,9 @@ abnormal_labels = numpy.ones(len(abnormal_files))
 if len(abnormal_files) == 0:
     logger.exception("no_wav_data!!")
 
+print("normal length : ", len(normal_files))
+print("abnormal length : ", len(abnormal_files))
+
 train_files = normal_files[len(abnormal_files):]
 y_train = normal_labels[len(abnormal_files):]
 test_files = numpy.concatenate((normal_files[:len(abnormal_files)], abnormal_files), axis=0)
@@ -85,7 +88,7 @@ for idx in range(len(train_files)):
         logger.warning(f'{msg}')
 # df_train = df_train.abs()
 x_train = df_train.reset_index()
-# print("x_train : ", x_train)
+print("x_train : ", x_train)
 # # print("x_train median : ", x_train.median(axis=1))
 # print("y_train : ", y_train)
 # print("y_train shape: ", y_train.shape)
@@ -107,7 +110,7 @@ for idx in range(len(test_files)):
         logger.warning(f'{msg}')
 # df_test = df_test.abs()
 x_test = df_test.reset_index()
-# print("x_test : ", x_test)
+print("x_test : ", x_test)
 # print("y_test : ", y_test)
 # print("y_test shape: ", y_test.shape)
 # print("x_train maximum : ", x_train.max(axis=1))
@@ -136,6 +139,7 @@ y_result = pd.concat([pd.DataFrame(y_train), pd.DataFrame(y_test)], axis=0)
 y_result.columns = ['label']
 result = pd.concat([x_result, y_result], axis=1)
 result.drop(["index"], axis=1, inplace=True)
+print("result shape : ", result.shape)
 # print("result : ", result)
 datat_dict = {
     # "x_train": x_train,
