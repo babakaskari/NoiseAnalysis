@@ -44,7 +44,15 @@ x_train, x_test, y_train, y_test = train_test_split(x_dataset,
                                                     shuffle=True,
                                                     stratify=y_dataset,
                                                     random_state=42)
-clf = xgb.sklearn.XGBClassifier(nthread=-1, n_estimators=50, seed=42)
+clf = xgb.sklearn.XGBClassifier(n_estimators=100,
+                                max_depth=10,
+                                learning_rate=0.3,
+                                subsample=0.8,
+                                colsample_bytree=0.8,
+                                booster="gbtree",
+                                eval_metric="error",
+                                scale_pos_weight=5,
+                                seed=42)
 clf.fit(x_train, y_train)
 xgb_pred = clf.predict(x_train)
 
