@@ -61,16 +61,23 @@ abnormal_labels = numpy.ones(len(abnormal_files))
 
 if len(abnormal_files) == 0:
     logger.exception("no_wav_data!!")
-
+print("normal files : ", normal_files)
+print("abnormal file : ", abnormal_files)
 print("normal length : ", len(normal_files))
 print("abnormal length : ", len(abnormal_files))
 
-train_files = normal_files[len(abnormal_files):]
-y_train = normal_labels[len(abnormal_files):]
-test_files = numpy.concatenate((normal_files[:len(abnormal_files)], abnormal_files), axis=0)
-y_test = numpy.concatenate((normal_labels[:len(abnormal_files)], abnormal_labels), axis=0)
-print("train_files  : \n", train_files)
-print("train  labels shape: \n", y_train.shape)
+train_files = normal_files[:]
+y_train = normal_labels[:]
+print("normal label : ", y_train)
+print("normal label shape : ", y_train.shape)
+test_files = abnormal_files[:]
+y_test = abnormal_labels[:]
+print("normal label : ", y_test)
+print("normal label shape : ", y_test.shape)
+# test_files = numpy.concatenate((normal_files[:len(abnormal_files)], abnormal_files), axis=0)
+# y_test = numpy.concatenate((normal_labels[:len(abnormal_files)], abnormal_labels), axis=0)
+# print("train_files  : \n", train_files)
+# print("train  labels shape: \n", y_train.shape)
 i = 0
 for idx in range(len(train_files)):
     try:
