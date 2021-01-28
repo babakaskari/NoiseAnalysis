@@ -25,13 +25,14 @@ file_to_read.close()
 # print(loaded_object)
 dataset = loaded_object
 # print("dataset : ", dataset)
-print("dataset shpae : ", dataset.shape)
+# print("dataset shpae : ", dataset.shape)
 # dataset = preprocessed_mimi.preprocessing_mimi()
 # x_train = dataset["x_train"]
 # y_train = dataset["y_train"]
 # x_test = dataset["x_test"]
 # y_test = dataset["y_test"]
 result = dataset["result"]
+print("result shpae : ", result.shape)
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]
 x_dataset = result.drop(["label"], axis=1)

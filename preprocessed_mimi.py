@@ -96,12 +96,10 @@ for idx in range(len(test_files)):
         multi_channel_data, sr = librosa.load(test_files[idx], sr=None, mono=True)
 
         if i != 0:
-            # print(i)
             df1 = pd.DataFrame(multi_channel_data.reshape(1, -1))
             df_test = df_test.append(df1)
 
         else:
-            # print(i)
             df_test = pd.DataFrame(data=multi_channel_data.reshape(1, -1))
             i = i + 1
 

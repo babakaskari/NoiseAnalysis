@@ -1,10 +1,5 @@
 import pandas as pd
 import numpy as np
-from sklearn.semi_supervised import LabelPropagation
-from sklearn.preprocessing import OneHotEncoder
-import sklearn
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn import preprocessing, metrics
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score
@@ -12,6 +7,7 @@ from sklearn.model_selection import cross_val_predict
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
 from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 
@@ -40,6 +36,10 @@ def evaluate_preds(model, x_train, y_train,  x_true, y_true):
     print(f"F1 Score : {f1: .2f}")
     print("Score:", metrics.accuracy_score(y_true, y_preds))
     print("Model score is : ", model.score(x_true, y_true))
+    confiusion_matrix_value = confusion_matrix(y_true, y_preds)
+    print("Confiusion Matrix : ", confiusion_matrix_value)
+    plot_confusion_matrix(model, x_true, y_true)
+    plt.show()
     # print(np.mean(y_test == y_pred))
     pred_probality = model.predict_proba(x_true)
     # print("Predict probability : ", pred_probality)
