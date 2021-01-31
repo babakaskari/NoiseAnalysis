@@ -7,37 +7,27 @@ import time
 from matplotlib import dates as mpl_dates
 import sklearn
 from sklearn.model_selection import train_test_split
-import sys
-import evaluator
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import roc_curve
-import seaborn as sns
-import xgboost as xgb
-from sklearn import metrics
-from xgboost import XGBClassifier
+import evaluator
+
 # sys.path.insert(0, "C:\\Graphviz\\bin")
 # sys.path.insert(0, "C:\\Graphviz")
 # sns.set()
 
-file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
+file_to_read = open('.\\pickle\\preprocessed_dataset_with_mel.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)
 dataset = loaded_object
+x_dataset = dataset["x_dataset"]
+y_dataset = dataset["y_dataset"]
+n_x_dataset = dataset["n_x_dataset"]
+
 # print("dataset : ", dataset)
-# print("dataset shpae : ", dataset.shape)
-# dataset = preprocessed_mimi.preprocessing_mimi()
-# x_train = dataset["x_train"]
-# y_train = dataset["y_train"]
-# x_test = dataset["x_test"]
-# y_test = dataset["y_test"]
-result = dataset["result"]
-print("result shpae : ", result.shape)
-# clf = XGBClassifier()
-y_dataset = result.loc[:, ["label"]]
-x_dataset = result.drop(["label"], axis=1)
-# print("x_dataset : ", x_dataset)
-# print("y_dataset : ", y_dataset)
+
+print("x_dataset : \n", x_dataset.shape)
+print("y_dataset : \n", y_dataset.shape)
+print("normalized x_dataset : \n", n_x_dataset.shape)
 x_train, x_test, y_train, y_test = train_test_split(x_dataset,
                                                     y_dataset,
                                                     test_size=0.30,
@@ -46,7 +36,10 @@ x_train, x_test, y_train, y_test = train_test_split(x_dataset,
                                                     random_state=42)
 clf = KNeighborsClassifier(n_neighbors=5)
 clf.fit(x_train, y_train)
-
+print("x_train : ", x_train)
+print("x_test : ", x_test)
+print("y_train : ", y_train)
+print("y_test : ", y_test)
 evaluator.evaluate_preds(clf, x_train, y_train, x_test, y_test)
 
 # plt.figure(figsize=(20, 15))

@@ -148,7 +148,7 @@ result = pd.concat([x_result, y_result], axis=1)
 result.drop(["index"], axis=1, inplace=True)
 print("result shape : ", result.shape)
 print("result : ", result)
-datat_dict = {
+data_dict = {
     # "x_train": x_train,
     # "y_train": y_train,
     # "x_test": x_test,
@@ -157,7 +157,7 @@ datat_dict = {
 }
 
 f_t_write = open('.\\pickle\\preprocessed_dataset.pickle', "wb")
-pickle.dump(datat_dict, f_t_write)
+pickle.dump(data_dict, f_t_write)
 f_t_write.close()
 # return datat_dict
 

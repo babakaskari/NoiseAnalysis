@@ -1,11 +1,3 @@
-#!/usr/bin/env python
-"""
- @file   baseline.py
- @brief  Baseline code of simple AE-based anomaly detection used experiment in [1].
- @author Ryo Tanabe and Yohei Kawaguchi (Hitachi Ltd.)
- Copyright (C) 2019 Hitachi, Ltd. All right reserved.
- [1] Harsh Purohit, Ryo Tanabe, Kenji Ichige, Takashi Endo, Yuki Nikaido, Kaori Suefusa, and Yohei Kawaguchi, "MIMII Dataset: Sound Dataset for Malfunctioning Industrial Machine Investigation and Inspection," arXiv preprint arXiv:1909.09347, 2019.
-"""
 ########################################################################
 # import default python-library
 ########################################################################
@@ -20,6 +12,7 @@ import glob
 # import additional python-library
 ########################################################################
 import numpy
+import pandas as pd
 import librosa
 import librosa.core
 import librosa.feature
@@ -66,7 +59,14 @@ class visualizer(object):
         self.plt.subplots_adjust(wspace=0.3, hspace=0.3)
 
     def loss_plot(self, loss, val_loss):
-
+        """
+        Plot loss curve.
+        loss : list [ float ]
+            training loss time series.
+        val_loss : list [ float ]
+            validation loss time series.
+        return   : None
+        """
         ax = self.fig.add_subplot(1, 1, 1)
         ax.cla()
         ax.plot(loss)
@@ -77,7 +77,12 @@ class visualizer(object):
         ax.legend(["Train", "Test"], loc="upper right")
 
     def save_figure(self, name):
-
+        """
+        Save figure.
+        name : str
+            save .png file path.
+        return : None
+        """
         self.plt.savefig(name)
 
 
@@ -89,14 +94,26 @@ class visualizer(object):
 ########################################################################
 # pickle I/O
 def save_pickle(filename, save_data):
-
+    """
+    picklenize the data.
+    filename : str
+        pickle filename
+    data : free datatype
+        some data will be picklenized
+    return : None
+    """
     logger.info("save_pickle -> {}".format(filename))
     with open(filename, 'wb') as sf:
         pickle.dump(save_data, sf)
 
 
 def load_pickle(filename):
-
+    """
+    unpicklenize the data.
+    filename : str
+        pickle filename
+    return : data
+    """
     logger.info("load_pickle <- {}".format(filename))
     with open(filename, 'rb') as lf:
         load_data = pickle.load(lf)
@@ -105,7 +122,16 @@ def load_pickle(filename):
 
 # wav file Input
 def file_load(wav_name, mono=False):
-
+    """
+    load .wav file.
+    wav_name : str
+        target .wav file
+    sampling_rate : int
+        audio file sampling_rate
+    mono : boolean
+        When load a multi channels file and this param True, the returned data will be merged for mono data
+    return : numpy.array( float )
+    """
     try:
         return librosa.load(wav_name, sr=None, mono=mono)
     except:
@@ -113,7 +139,17 @@ def file_load(wav_name, mono=False):
 
 
 def demux_wav(wav_name, channel=0):
-
+    """
+    demux .wav file.
+    wav_name : str
+        target .wav file
+    channel : int
+        target channel number
+    return : numpy.array( float )
+        demuxed mono data
+    Enabled to read multiple sampling rates.
+    Enabled even one channel.
+    """
     try:
         multi_channel_data, sr = file_load(wav_name)
         if multi_channel_data.ndim <= 1:
@@ -137,7 +173,14 @@ def file_to_vector_array(file_name,
                          n_fft=1024,
                          hop_length=512,
                          power=2.0):
-
+    """
+    convert file_name to a vector array.
+    file_name : str
+        target .wav file
+    return : numpy.array( numpy.array( float ) )
+        vector array
+        * dataset.shape = (dataset_size, fearture_vector_length)
+    """
     # 01 calculate the number of dimensions
     dims = n_mels * frames
 
@@ -175,11 +218,23 @@ def list_to_vector_array(file_list,
                          n_fft=1024,
                          hop_length=512,
                          power=2.0):
-
+    """
+    convert the file_list to a vector array.
+    file_to_vector_array() is iterated, and the output vector array is concatenated.
+    file_list : list [ str ]
+        .wav filename list of dataset
+    msg : str ( default = "calc..." )
+        description for tqdm.
+        this parameter will be input into "desc" param at tqdm.
+    return : numpy.array( numpy.array( float ) )
+        training dataset (when generate the validation data, this function is not used.)
+        * dataset.shape = (total_dataset_size, feature_vector_length)
+    """
     # 01 calculate the number of dimensions
     dims = n_mels * frames
 
     # 02 loop of file_to_vectorarray
+
     for idx in tqdm(range(len(file_list)), desc=msg):
 
         vector_array = file_to_vector_array(file_list[idx],
@@ -201,7 +256,30 @@ def dataset_generator(target_dir,
                       normal_dir_name="normal",
                       abnormal_dir_name="abnormal",
                       ext="wav"):
-
+    """
+    target_dir : str
+        base directory path of the dataset
+    normal_dir_name : str (default="normal")
+        directory name the normal data located in
+    abnormal_dir_name : str (default="abnormal")
+        directory name the abnormal data located in
+    ext : str (default="wav")
+        filename extension of audio files
+    return :
+        train_data : numpy.array( numpy.array( float ) )
+            training dataset
+            * dataset.shape = (total_dataset_size, feature_vector_length)
+        train_files : list [ str ]
+            file list for training
+        train_labels : list [ boolean ]
+            label info. list for training
+            * normal/abnormal = 0/1
+        eval_files : list [ str ]
+            file list for evaluation
+        eval_labels : list [ boolean ]
+            label info. list for evaluation
+            * normal/abnormal = 0/1
+    """
     logger.info("target_dir : {}".format(target_dir))
 
     # 01 normal list generate
@@ -224,13 +302,9 @@ def dataset_generator(target_dir,
 
     # 03 separate train & eval
     train_files = normal_files[len(abnormal_files):]
-    print("train files : ", train_files)
     train_labels = normal_labels[len(abnormal_files):]
-    print("train labels : ", train_labels)
     eval_files = numpy.concatenate((normal_files[:len(abnormal_files)], abnormal_files), axis=0)
-    print("eval files : ", eval_files)
     eval_labels = numpy.concatenate((normal_labels[:len(abnormal_files)], abnormal_labels), axis=0)
-    print("eval labels : ", eval_labels)
     logger.info("train_file num : {num}".format(num=len(train_files)))
     logger.info("eval_file  num : {num}".format(num=len(eval_files)))
 
@@ -292,86 +366,108 @@ if __name__ == "__main__":
         print("[{num}/{total}] {dirname}".format(dirname=target_dir, num=dir_idx + 1, total=len(dirs)))
 
         # dataset param
-        print("target_dir : ", target_dir)
         db = os.path.split(os.path.split(os.path.split(target_dir)[0])[0])[1]
-        print("db is equal to : ", db)
         machine_type = os.path.split(os.path.split(target_dir)[0])[1]
-        print("machine_type is equal to : ", machine_type)
         machine_id = os.path.split(target_dir)[1]
-        print("machine_id is equal to : ", machine_id)
 
         # setup path
         evaluation_result = {}
-
         train_pickle = "{pickle}/train_{machine_type}_{machine_id}_{db}.pickle".format(pickle=param["pickle_directory"],
                                                                                        machine_type=machine_type,
                                                                                        machine_id=machine_id, db=db)
-
-        print("train_pickle : ", train_pickle)
         eval_files_pickle = "{pickle}/eval_files_{machine_type}_{machine_id}_{db}.pickle".format(
                                                                                        pickle=param["pickle_directory"],
                                                                                        machine_type=machine_type,
                                                                                        machine_id=machine_id,
                                                                                        db=db)
-        print("eval_files_pickle : ", eval_files_pickle)
         eval_labels_pickle = "{pickle}/eval_labels_{machine_type}_{machine_id}_{db}.pickle".format(
                                                                                        pickle=param["pickle_directory"],
                                                                                        machine_type=machine_type,
                                                                                        machine_id=machine_id,
                                                                                        db=db)
-        print("eval_labels_pickle : ", eval_labels_pickle)
         model_file = "{model}/model_{machine_type}_{machine_id}_{db}.hdf5".format(model=param["model_directory"],
                                                                                   machine_type=machine_type,
                                                                                   machine_id=machine_id,
                                                                                   db=db)
-        print("model_file : ", model_file)
         history_img = "{model}/history_{machine_type}_{machine_id}_{db}.png".format(model=param["model_directory"],
                                                                                     machine_type=machine_type,
                                                                                     machine_id=machine_id,
                                                                                     db=db)
-        print("history_img : ", history_img)
         evaluation_result_key = "{machine_type}_{machine_id}_{db}".format(machine_type=machine_type,
                                                                           machine_id=machine_id,
                                                                           db=db)
-        print("evaluation_result_key : ", evaluation_result_key)
+
         # dataset generator
         print("============== DATASET_GENERATOR ==============")
-        """""
         if os.path.exists(train_pickle) and os.path.exists(eval_files_pickle) and os.path.exists(eval_labels_pickle):
             train_data = load_pickle(train_pickle)
             eval_files = load_pickle(eval_files_pickle)
             eval_labels = load_pickle(eval_labels_pickle)
         else:
-        """
-        train_files, train_labels, eval_files, eval_labels = dataset_generator(target_dir)
-        print("train files: ", train_files)
-        print("eval files : ", eval_files)
+            train_files, train_labels, eval_files, eval_labels = dataset_generator(target_dir)
 
-        train_data = list_to_vector_array(train_files,
-                                          msg="generate train_dataset",
-                                          n_mels=param["feature"]["n_mels"],
-                                          frames=param["feature"]["frames"],
-                                          n_fft=param["feature"]["n_fft"],
-                                          hop_length=param["feature"]["hop_length"],
-                                          power=param["feature"]["power"])
-        eval_data = list_to_vector_array(eval_files,
-                                          msg="generate train_dataset",
-                                          n_mels=param["feature"]["n_mels"],
-                                          frames=param["feature"]["frames"],
-                                          n_fft=param["feature"]["n_fft"],
-                                          hop_length=param["feature"]["hop_length"],
-                                          power=param["feature"]["power"])
-        save_pickle(train_pickle, train_data)
-        save_pickle(eval_files_pickle, eval_files)
-        save_pickle(eval_labels_pickle, eval_labels)
+            train_data = list_to_vector_array(train_files,
+                                              msg="generate train_dataset",
+                                              n_mels=param["feature"]["n_mels"],
+                                              frames=param["feature"]["frames"],
+                                              n_fft=param["feature"]["n_fft"],
+                                              hop_length=param["feature"]["hop_length"],
+                                              power=param["feature"]["power"])
+
+            save_pickle(train_pickle, train_data)
+            save_pickle(eval_files_pickle, eval_files)
+            save_pickle(eval_labels_pickle, eval_labels)
 
         # model training
         print("============== MODEL TRAINING ==============")
         model = keras_model(param["feature"]["n_mels"] * param["feature"]["frames"])
         model.summary()
+
         # training
-        print("train_data   : ", train_data)
-        print("eval_files : ", eval_files)
-        print("evale labels : ", eval_labels)
-        print("evale data : ", eval_data)
+        if os.path.exists(model_file):
+            model.load_weights(model_file)
+        else:
+            model.compile(**param["fit"]["compile"])
+            history = model.fit(train_data,
+                                train_data,
+                                epochs=param["fit"]["epochs"],
+                                batch_size=param["fit"]["batch_size"],
+                                shuffle=param["fit"]["shuffle"],
+                                validation_split=param["fit"]["validation_split"],
+                                verbose=param["fit"]["verbose"])
+
+            visualizer.loss_plot(history.history["loss"], history.history["val_loss"])
+            visualizer.save_figure(history_img)
+            model.save_weights(model_file)
+
+        # evaluation
+        print("============== EVALUATION ==============")
+        y_pred = [0. for k in eval_labels]
+        y_true = eval_labels
+
+        for num, file_name in tqdm(enumerate(eval_files), total=len(eval_files)):
+            try:
+                data = file_to_vector_array(file_name,
+                                            n_mels=param["feature"]["n_mels"],
+                                            frames=param["feature"]["frames"],
+                                            n_fft=param["feature"]["n_fft"],
+                                            hop_length=param["feature"]["hop_length"],
+                                            power=param["feature"]["power"])
+                error = numpy.mean(numpy.square(data - model.predict(data)), axis=1)
+                y_pred[num] = numpy.mean(error)
+            except:
+                logger.warning("File broken!!: {}".format(file_name))
+
+        score = metrics.roc_auc_score(y_true, y_pred)
+        logger.info("AUC : {}".format(score))
+        evaluation_result["AUC"] = float(score)
+        results[evaluation_result_key] = evaluation_result
+        print("===========================")
+
+    # output results
+    print("\n===========================")
+    logger.info("all results -> {}".format(result_file))
+    with open(result_file, "w") as f:
+        f.write(yaml.dump(results, default_flow_style=False))
+    print("===========================")
 ########################################################################

@@ -214,11 +214,13 @@ def file_to_vector_array(file_name,
                                                      hop_length=hop_length,
                                                      n_mels=n_mels,
                                                      power=power)
+    print("file name : ", file_name)
     print("mel : ", mel_spectrogram)
     print("mel shape: ", mel_spectrogram.shape)
     # 03 convert melspectrogram to log mel energy
     log_mel_spectrogram = 20.0 / power * numpy.log10(mel_spectrogram + sys.float_info.epsilon)
-
+    print("mel log: ", log_mel_spectrogram)
+    print("mel log shape : ", log_mel_spectrogram.shape)
     # 04 calculate total vector size
     vectorarray_size = len(log_mel_spectrogram[0, :]) - frames + 1
 
@@ -231,6 +233,8 @@ def file_to_vector_array(file_name,
     for t in range(frames):
         vectorarray[:, n_mels * t: n_mels * (t + 1)] = log_mel_spectrogram[:, t: t + vectorarray_size].T
 
+    print("vector array : ", vectorarray)
+    print("vector array shape: ", vectorarray.shape)
     return vectorarray
 
 
@@ -257,10 +261,10 @@ def list_to_vector_array(file_list,
     """
     # 01 calculate the number of dimensions
     dims = n_mels * frames
-
+    print("file_list : ", file_list)
     # 02 loop of file_to_vectorarray
     for idx in tqdm(range(len(file_list)), desc=msg):
-
+        print("idx ============================: ", idx)
         vector_array = file_to_vector_array(file_list[idx],
                                             n_mels=n_mels,
                                             frames=frames,
@@ -273,10 +277,9 @@ def list_to_vector_array(file_list,
 
         dataset[vector_array.shape[0] * idx: vector_array.shape[0] * (idx + 1), :] = vector_array
 
-
-    print("dadtaset : ", dataset)
-
-
+        print("dadtaset : ", dataset)
+        print("dadtaset shape: ", dataset.shape)
+        print("vector array shape: ", vector_array.shape)
     return dataset
 
 
@@ -398,7 +401,7 @@ if __name__ == "__main__":
     # setup the result
     result_file = "{result}/{file_name}".format(result=param["result_directory"], file_name=param["result_file"])
     results = {}
-
+    print("dirs : ", dirs)
     # loop of the base directory
     for dir_idx, target_dir in enumerate(dirs):
         print("\n===========================")
@@ -499,6 +502,9 @@ if __name__ == "__main__":
                                             power=param["feature"]["power"])
                 error = numpy.mean(numpy.square(data - model.predict(data)), axis=1)
                 y_pred[num] = numpy.mean(error)
+                print("file name : ", file_name)
+                print("data : ", data)
+                print("data shape : ", data.shape)
             except:
                 logger.warning("File broken!!: {}".format(file_name))
 
