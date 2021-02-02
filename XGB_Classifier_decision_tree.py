@@ -19,8 +19,8 @@ from xgboost import XGBClassifier
 # sys.path.insert(0, "C:\\Graphviz")
 # sns.set()
 
-# file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
-file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
+file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
+# file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)
@@ -67,9 +67,9 @@ clf.fit(x_train, y_train)
 
 evaluator.evaluate_preds(clf, x_train, y_train, x_test, y_test)
 
-# plt.figure(figsize=(20, 15))
-# xgb.plot_importance(clf, ax=plt.gca())
-# plt.show()
+plt.figure(figsize=(20, 15))
+xgb.plot_importance(clf, ax=plt.gca())
+plt.show()
 # plt.figure(figsize=(20, 15))
 # xgb.plot_tree(clf, ax=plt.gca())
 # plt.show()

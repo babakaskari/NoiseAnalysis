@@ -22,8 +22,7 @@ import logging
 # from import
 from tqdm import tqdm
 from sklearn import metrics
-from keras.models import Model
-from keras.layers import Input, Dense
+from sklearn.preprocessing import StandardScaler
 import librosa.display
 import matplotlib.pyplot as plt
 ########################################################################
@@ -125,9 +124,9 @@ x_dataset["min"] = dataset.min(axis=1)
 x_dataset["max"] = dataset.max(axis=1)
 x_dataset["mean"] = dataset.mean(axis=1)
 x_dataset["median"] = dataset.median(axis=1)
-# x_dataset["quantile1"] = dataset.quantile(0.25)
-# x_dataset["quantile2"] = dataset.quantile(0.5)
-# x_dataset["quantile3"] = dataset.quantile(0.75)
+x_dataset["quantile1"] = dataset.quantile(0.25)
+x_dataset["quantile2"] = dataset.quantile(0.5)
+x_dataset["quantile3"] = dataset.quantile(0.75)
 x_dataset["std"] = dataset.std(axis=1)
 x_dataset = x_dataset.reset_index()
 x_dataset.drop(["index"], axis=1, inplace=True)
@@ -142,6 +141,12 @@ y_dataset = pd.concat([pd.DataFrame(y_train), pd.DataFrame(y_test)], axis=0)
 y_dataset.columns = ['label']
 y_dataset = y_dataset.reset_index()
 y_dataset.drop(["index"], axis=1, inplace=True)
+scaler = StandardScaler()
+# # print(y_dataset)
+n_x_dataset = scaler.fit_transform(x_dataset)
+# print("n_x_dataset : ", n_x_dataset)
+y_dataset = y_dataset.applymap(int)
+y_dataset = y_dataset.applymap(str)
 # print("y_dataset : ", y_dataset)
 result = pd.concat([x_dataset, y_dataset], axis=1)
 print(" result : \n", result)
