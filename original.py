@@ -231,8 +231,9 @@ def list_to_vector_array(file_list,
         * dataset.shape = (total_dataset_size, feature_vector_length)
     """
     # 01 calculate the number of dimensions
-    dims = n_mels * frames
 
+    dims = n_mels * frames
+    # global dataset
     # 02 loop of file_to_vectorarray
 
     for idx in tqdm(range(len(file_list)), desc=msg):
@@ -444,7 +445,8 @@ if __name__ == "__main__":
         print("============== EVALUATION ==============")
         y_pred = [0. for k in eval_labels]
         y_true = eval_labels
-
+        print("y_pred : ", y_pred)
+        print("y_true : ", y_true)
         for num, file_name in tqdm(enumerate(eval_files), total=len(eval_files)):
             try:
                 data = file_to_vector_array(file_name,
@@ -457,7 +459,8 @@ if __name__ == "__main__":
                 y_pred[num] = numpy.mean(error)
             except:
                 logger.warning("File broken!!: {}".format(file_name))
-
+        print("y_pred : ", y_pred)
+        print("y_true : ", y_true)
         score = metrics.roc_auc_score(y_true, y_pred)
         logger.info("AUC : {}".format(score))
         evaluation_result["AUC"] = float(score)

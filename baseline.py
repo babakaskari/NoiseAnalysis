@@ -168,8 +168,8 @@ def demux_wav(wav_name, channel=0):
     """
     try:
         multi_channel_data, sr = file_load(wav_name)
-        print("multi channel data :  ", multi_channel_data)
-        print("multi channel data shape :  ", multi_channel_data.shape)
+        # print("multi channel data :  ", multi_channel_data)
+        # print("multi channel data shape :  ", multi_channel_data.shape)
         if multi_channel_data.ndim <= 1:
             return sr, multi_channel_data
 
@@ -206,21 +206,21 @@ def file_to_vector_array(file_name,
 
     # 02 generate melspectrogram using librosa (**kwargs == param["librosa"])
     sr, y = demux_wav(file_name)
-    print("y before mel : ", y)
-    print("y shape before mel : ", y.shape)
+    # print("y before mel : ", y)
+    # print("y shape before mel : ", y.shape)
     mel_spectrogram = librosa.feature.melspectrogram(y=y,
                                                      sr=sr,
                                                      n_fft=n_fft,
                                                      hop_length=hop_length,
                                                      n_mels=n_mels,
                                                      power=power)
-    print("file name : ", file_name)
-    print("mel : ", mel_spectrogram)
-    print("mel shape: ", mel_spectrogram.shape)
+    # print("file name : ", file_name)
+    # print("mel : ", mel_spectrogram)
+    # print("mel shape: ", mel_spectrogram.shape)
     # 03 convert melspectrogram to log mel energy
     log_mel_spectrogram = 20.0 / power * numpy.log10(mel_spectrogram + sys.float_info.epsilon)
-    print("mel log: ", log_mel_spectrogram)
-    print("mel log shape : ", log_mel_spectrogram.shape)
+    # print("mel log: ", log_mel_spectrogram)
+    # print("mel log shape : ", log_mel_spectrogram.shape)
     # 04 calculate total vector size
     vectorarray_size = len(log_mel_spectrogram[0, :]) - frames + 1
 
@@ -233,8 +233,8 @@ def file_to_vector_array(file_name,
     for t in range(frames):
         vectorarray[:, n_mels * t: n_mels * (t + 1)] = log_mel_spectrogram[:, t: t + vectorarray_size].T
 
-    print("vector array : ", vectorarray)
-    print("vector array shape: ", vectorarray.shape)
+    # print("vector array : ", vectorarray)
+    # print("vector array shape: ", vectorarray.shape)
     return vectorarray
 
 
@@ -261,7 +261,7 @@ def list_to_vector_array(file_list,
     """
     # 01 calculate the number of dimensions
     dims = n_mels * frames
-    print("file_list : ", file_list)
+    # print("file_list : ", file_list)
     # 02 loop of file_to_vectorarray
     for idx in tqdm(range(len(file_list)), desc=msg):
         print("idx ============================: ", idx)
@@ -277,9 +277,9 @@ def list_to_vector_array(file_list,
 
         dataset[vector_array.shape[0] * idx: vector_array.shape[0] * (idx + 1), :] = vector_array
 
-        print("dadtaset : ", dataset)
-        print("dadtaset shape: ", dataset.shape)
-        print("vector array shape: ", vector_array.shape)
+        # print("dadtaset : ", dataset)
+        # print("dadtaset shape: ", dataset.shape)
+        # print("vector array shape: ", vector_array.shape)
     return dataset
 
 
@@ -331,12 +331,10 @@ def dataset_generator(target_dir,
                                                                    ext=ext))))
     abnormal_labels = numpy.ones(len(abnormal_files))
 
-    print("normal files : \n", normal_files)
-    print("normal labels : \n", normal_labels)
-    print("normal files : \n", abnormal_files)
-    print("normal labels : \n", abnormal_labels)
-
-
+    # print("normal files : \n", normal_files)
+    # print("normal labels : \n", normal_labels)
+    # print("normal files : \n", abnormal_files)
+    # print("normal labels : \n", abnormal_labels)
 
     if len(abnormal_files) == 0:
         logger.exception("no_wav_data!!")
@@ -347,10 +345,10 @@ def dataset_generator(target_dir,
     eval_files = numpy.concatenate((normal_files[:len(abnormal_files)], abnormal_files), axis=0)
     eval_labels = numpy.concatenate((normal_labels[:len(abnormal_files)], abnormal_labels), axis=0)
 
-    print("train_files files : ", train_files)
-    print("train  labels : ", train_labels)
-    print("eval files : ", eval_files)
-    print("eval labels : ", eval_labels)
+    # print("train_files files : ", train_files)
+    # print("train  labels : ", train_labels)
+    # print("eval files : ", eval_files)
+    # print("eval labels : ", eval_labels)
     logger.info("train_file num : {num}".format(num=len(train_files)))
     logger.info("eval_file  num : {num}".format(num=len(eval_files)))
 
@@ -467,9 +465,11 @@ if __name__ == "__main__":
 
         # model training
         print("============== MODEL TRAINING ==============")
+        print("param : ", param["feature"]["n_mels"] * param["feature"]["frames"])
         model = keras_model(param["feature"]["n_mels"] * param["feature"]["frames"])
         model.summary()
-
+        print("train data before fit : ", train_data)
+        print("train data shape before fit : ", train_data.shape)
         # training
         if os.path.exists(model_file):
             model.load_weights(model_file)
@@ -491,7 +491,8 @@ if __name__ == "__main__":
         print("============== EVALUATION ==============")
         y_pred = [0. for k in eval_labels]
         y_true = eval_labels
-
+        print("y_pred : ", y_pred)
+        print("y_true : ", y_true)
         for num, file_name in tqdm(enumerate(eval_files), total=len(eval_files)):
             try:
                 data = file_to_vector_array(file_name,
@@ -502,9 +503,9 @@ if __name__ == "__main__":
                                             power=param["feature"]["power"])
                 error = numpy.mean(numpy.square(data - model.predict(data)), axis=1)
                 y_pred[num] = numpy.mean(error)
-                print("file name : ", file_name)
-                print("data : ", data)
-                print("data shape : ", data.shape)
+                # print("file name : ", file_name)
+                # print("data : ", data)
+                # print("data shape : ", data.shape)
             except:
                 logger.warning("File broken!!: {}".format(file_name))
 

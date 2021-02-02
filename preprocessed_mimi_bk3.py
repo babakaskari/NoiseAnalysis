@@ -28,6 +28,9 @@ import librosa.display
 import matplotlib.pyplot as plt
 ########################################################################
 
+
+
+
 n_mels = 64
 frames = 5
 n_fft = 1024
@@ -58,20 +61,23 @@ abnormal_labels = numpy.ones(len(abnormal_files))
 
 if len(abnormal_files) == 0:
     logger.exception("no_wav_data!!")
-# print("normal files : ", normal_files)
-# print("abnormal file : ", abnormal_files)
-# print("normal length : ", len(normal_files))
-# print("abnormal length : ", len(abnormal_files))
+print("normal files : ", normal_files)
+print("abnormal file : ", abnormal_files)
+print("normal length : ", len(normal_files))
+print("abnormal length : ", len(abnormal_files))
 
 train_files = normal_files[:]
 y_train = normal_labels[:]
-# print("normal label : ", y_train)
-# print("normal label shape : ", y_train.shape)
+print("normal label : ", y_train)
+print("normal label shape : ", y_train.shape)
 test_files = abnormal_files[:]
 y_test = abnormal_labels[:]
-# print("normal label : ", y_test)
-# print("normal label shape : ", y_test.shape)
-
+print("normal label : ", y_test)
+print("normal label shape : ", y_test.shape)
+# test_files = numpy.concatenate((normal_files[:len(abnormal_files)], abnormal_files), axis=0)
+# y_test = numpy.concatenate((normal_labels[:len(abnormal_files)], abnormal_labels), axis=0)
+# print("train_files  : \n", train_files)
+# print("train  labels shape: \n", y_train.shape)
 i = 0
 for idx in range(len(train_files)):
     try:
@@ -89,7 +95,7 @@ for idx in range(len(train_files)):
         logger.warning(f'{msg}')
 # df_train = df_train.abs()
 x_train = df_train.reset_index()
-# print("x_train : ", x_train)
+print("x_train : ", x_train)
 # # print("x_train median : ", x_train.median(axis=1))
 # print("y_train : ", y_train)
 # print("y_train shape: ", y_train.shape)
@@ -111,37 +117,46 @@ for idx in range(len(test_files)):
         logger.warning(f'{msg}')
 # df_test = df_test.abs()
 x_test = df_test.reset_index()
-
-dataset = pd.concat([pd.DataFrame(x_train), pd.DataFrame(x_test)], axis=0)
-
-dataset.drop(["index"], axis=1, inplace=True)
-# print("dataset : ", dataset)
-x_dataset = pd.DataFrame()
-x_dataset["min"] = dataset.min(axis=1)
-x_dataset["max"] = dataset.max(axis=1)
-x_dataset["mean"] = dataset.mean(axis=1)
-x_dataset["median"] = dataset.median(axis=1)
-x_dataset["quantile1"] = dataset.quantile(0.25)
-x_dataset["quantile2"] = dataset.quantile(0.5)
-x_dataset["quantile3"] = dataset.quantile(0.75)
-x_dataset["std"] = dataset.std(axis=1)
-# print("x_dataset : ", x_dataset)
-dataset_description = x_dataset.describe()
-dataset_description.to_csv(".\\result\\dataset_description.csv", index=True)
-
+print("x_test : ", x_test)
+# print("y_test : ", y_test)
+# print("y_test shape: ", y_test.shape)
+# print("x_train maximum : ", x_train.max(axis=1))
+# print("x_test maximum : ", x_test.max(axis=1))
+# print("x_train minimum : ", x_train.min(axis=1))
+# print("x_test minimum : ", x_test.min(axis=1))
+# print("x_train maximum : ", x_train.max(axis=1))
+x_train_description = x_train.apply(pd.DataFrame.describe, axis=1)
+x_test_description = x_test.apply(pd.DataFrame.describe, axis=1)
+# print("x_train description : ", x_train_description)
+# print("x_test description : ", x_test_description)
+# print("x_train median : ", x_train.median(axis=1))
+# print("x_test median : ", x_test.median(axis=1))
+# x_train.to_csv("x_train.csv", index=False)
+# x_test.to_csv("x_test.csv", index=False)
+x_train_median = pd.DataFrame(x_train.median(axis=1), columns=['median'])
+x_train_min = pd.DataFrame(x_train.median(axis=1), columns=['min'])
+x_train_max = pd.DataFrame(x_train.max(axis=1), columns=['max'])
+x_train_mean = pd.DataFrame(x_train.mean(axis=1), columns=['mean'])
+x_train_std = pd.DataFrame(x_train.std(axis=1), columns=['std'])
+x_test_median = pd.DataFrame(x_test.median(axis=1), columns=['median'])
+x_train_description = pd.concat([x_train_description, x_train_median], axis=1)
+x_test_description = pd.concat([x_test_description, x_test_median], axis=1)
+x_train_description.to_csv(".\\result\\x_train_description.csv", index=True)
+x_test_description.to_csv(".\\result\\x_test_description.csv", index=True)
 # print("x_train : ", x_train)
 # print("x_test : ", x_test)
-y_dataset = pd.concat([pd.DataFrame(y_train), pd.DataFrame(y_test)], axis=0)
-y_dataset.columns = ['label']
-result = pd.concat([x_dataset, y_dataset], axis=1)
-# print(" result : ", result)
-# print("x_dataset : ", x_dataset)
-# print("y_dataset : ", y_dataset)
-# print("result shape : ", result.shape)
-
+x_result = pd.concat([pd.DataFrame(x_train), pd.DataFrame(x_test)], axis=0)
+y_result = pd.concat([pd.DataFrame(y_train), pd.DataFrame(y_test)], axis=0)
+y_result.columns = ['label']
+result = pd.concat([x_result, y_result], axis=1)
+result.drop(["index"], axis=1, inplace=True)
+print("result shape : ", result.shape)
+# print("result : ", result)
 data_dict = {
-    "x_dataset": x_dataset,
-    "y_dataset": y_dataset,
+    # "x_train": x_train,
+    # "y_train": y_train,
+    # "x_test": x_test,
+    # "y_test": y_test,
     "result": result,
 }
 
