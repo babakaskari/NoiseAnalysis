@@ -73,6 +73,8 @@ y_test = abnormal_labels[:]
 # print("normal label shape : ", y_test.shape)
 
 i = 0
+df_train = pd.DataFrame()
+df_test = pd.DataFrame()
 for idx in range(len(train_files)):
     try:
         multi_channel_data, sr = librosa.load(train_files[idx], sr=None, mono=True)
@@ -125,6 +127,8 @@ x_dataset["quantile1"] = dataset.quantile(0.25)
 x_dataset["quantile2"] = dataset.quantile(0.5)
 x_dataset["quantile3"] = dataset.quantile(0.75)
 x_dataset["std"] = dataset.std(axis=1)
+x_dataset = x_dataset.reset_index()
+x_dataset.drop(["index"], axis=1, inplace=True)
 # print("x_dataset : ", x_dataset)
 dataset_description = x_dataset.describe()
 dataset_description.to_csv(".\\result\\dataset_description.csv", index=True)
@@ -133,6 +137,9 @@ dataset_description.to_csv(".\\result\\dataset_description.csv", index=True)
 # print("x_test : ", x_test)
 y_dataset = pd.concat([pd.DataFrame(y_train), pd.DataFrame(y_test)], axis=0)
 y_dataset.columns = ['label']
+y_dataset = y_dataset.reset_index()
+y_dataset.drop(["index"], axis=1, inplace=True)
+# print("y_dataset : ", y_dataset)
 result = pd.concat([x_dataset, y_dataset], axis=1)
 # print(" result : ", result)
 # print("x_dataset : ", x_dataset)
