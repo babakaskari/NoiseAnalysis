@@ -46,6 +46,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 normal_files = sorted(glob.glob(".\\data\\normal\\*.wav"))
+# normal_files = sorted(glob.glob("/home/mohammed/data/normal/*.wav"))
 
 normal_labels = numpy.zeros(len(normal_files))
 if len(normal_files) == 0:
@@ -53,6 +54,7 @@ if len(normal_files) == 0:
 
 # 02 abnormal list generate
 abnormal_files = sorted(glob.glob(".\\data\\abnormal\\*.wav"))
+# abnormal_files = sorted(glob.glob("/home/mohammed/data/abnormal/*.wav"))
 
 abnormal_labels = numpy.ones(len(abnormal_files))
 
@@ -132,6 +134,7 @@ x_dataset.drop(["index"], axis=1, inplace=True)
 # print("x_dataset : ", x_dataset)
 dataset_description = x_dataset.describe()
 dataset_description.to_csv(".\\result\\dataset_description.csv", index=True)
+# dataset_description.to_csv("/home/mohammed/result/dataset_description.csv", index=True)
 
 # print("x_train : ", x_train)
 # print("x_test : ", x_test)
@@ -153,6 +156,7 @@ data_dict = {
 }
 
 f_t_write = open('.\\pickle\\preprocessed_dataset.pickle', "wb")
+# f_t_write = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "wb")
 pickle.dump(data_dict, f_t_write)
 f_t_write.close()
 # return datat_dict
