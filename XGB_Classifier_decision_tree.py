@@ -7,7 +7,6 @@ import time
 from matplotlib import dates as mpl_dates
 import sklearn
 from sklearn.model_selection import train_test_split
-import preprocessed_mimi_bk3
 import sys
 import evaluator
 from sklearn.metrics import roc_curve
@@ -31,7 +30,8 @@ dataset = loaded_object
 # y_train = dataset["y_train"]
 # x_test = dataset["x_test"]
 # y_test = dataset["y_test"]
-result = dataset["result"]
+# result = dataset["result"]
+print("result : ", result)
 print("result shpae : ", result.shape)
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]
