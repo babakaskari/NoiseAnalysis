@@ -8,3 +8,4 @@ data/
 /result/*
 /dataset/*
 *.bak
+*.py.bak
