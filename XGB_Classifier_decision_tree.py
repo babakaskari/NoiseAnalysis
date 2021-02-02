@@ -7,6 +7,7 @@ import time
 from matplotlib import dates as mpl_dates
 import sklearn
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import plot_confusion_matrix
 import sys
 import evaluator
 from sklearn.metrics import roc_curve
@@ -18,21 +19,27 @@ from xgboost import XGBClassifier
 # sys.path.insert(0, "C:\\Graphviz")
 # sns.set()
 
-file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
+# file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
+file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)
 dataset = loaded_object
 # print("dataset : ", dataset)
-# print("dataset shpae : ", dataset.shape)
+# print("dataset shape : ", dataset.shape)
 # dataset = preprocessed_mimi.preprocessing_mimi()
 # x_train = dataset["x_train"]
 # y_train = dataset["y_train"]
 # x_test = dataset["x_test"]
 # y_test = dataset["y_test"]
+
+result = dataset["result"]
+print("result shape : ", result.shape)
+
 # result = dataset["result"]
 print("result : ", result)
 print("result shpae : ", result.shape)
+
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]
 x_dataset = result.drop(["label"], axis=1)
@@ -40,10 +47,12 @@ x_dataset = result.drop(["label"], axis=1)
 # print("y_dataset : ", y_dataset)
 x_train, x_test, y_train, y_test = train_test_split(x_dataset,
                                                     y_dataset,
-                                                    test_size=0.35,
+                                                    test_size=0.25,
                                                     shuffle=True,
                                                     stratify=y_dataset,
                                                     random_state=42)
+print("x_train : ", x_train)
+print("x_test : ", x_test)
 clf = xgb.sklearn.XGBClassifier(n_estimators=100,
                                 max_depth=10,
                                 learning_rate=0.3,
@@ -54,7 +63,7 @@ clf = xgb.sklearn.XGBClassifier(n_estimators=100,
                                 scale_pos_weight=5,
                                 seed=42)
 clf.fit(x_train, y_train)
-xgb_pred = clf.predict(x_train)
+# xgb_pred = clf.predict(x_test)
 
 evaluator.evaluate_preds(clf, x_train, y_train, x_test, y_test)
 

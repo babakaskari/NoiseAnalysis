@@ -29,7 +29,7 @@ print("x_dataset : \n", x_dataset.shape)
 print("y_dataset : \n", y_dataset.shape)
 print("normalized x_dataset : \n", n_x_dataset.shape)
 x_train, x_test, y_train, y_test = train_test_split(x_dataset,
-                                                    y_dataset,
+                                                   y_dataset,
                                                     test_size=0.30,
                                                     shuffle=True,
                                                     stratify=y_dataset,
