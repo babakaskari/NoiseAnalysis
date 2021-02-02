@@ -1,6 +1,7 @@
 dataset/
 data/
 /data
+/data/*
 /dataset
 *.wav
 *.csv
