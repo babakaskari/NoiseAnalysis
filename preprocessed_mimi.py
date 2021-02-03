@@ -144,12 +144,16 @@ y_dataset.drop(["index"], axis=1, inplace=True)
 scaler = StandardScaler()
 # # print(y_dataset)
 n_x_dataset = scaler.fit_transform(x_dataset)
+n_x_dataset = pd.DataFrame(n_x_dataset, columns=['min', 'max', 'mean', 'median', 'quantile1', 'quantile2', 'quantile3', 'std'])
 # print("n_x_dataset : ", n_x_dataset)
 y_dataset = y_dataset.applymap(int)
-y_dataset = y_dataset.applymap(str)
+# y_dataset = y_dataset.applymap(str)
 # print("y_dataset : ", y_dataset)
 result = pd.concat([x_dataset, y_dataset], axis=1)
+# print("n_x_dataset : ", n_x_dataset)
+n_result = pd.concat([n_x_dataset, y_dataset], axis=1)
 print(" result : \n", result)
+print(" n_result : \n", n_result)
 # print("x_dataset : ", x_dataset)
 # print("y_dataset : ", y_dataset)
 # print("result shape : ", result.shape)
@@ -158,6 +162,7 @@ data_dict = {
     "x_dataset": x_dataset,
     "y_dataset": y_dataset,
     "result": result,
+    "n_result": n_result,
 }
 
 f_t_write = open('.\\pickle\\preprocessed_dataset.pickle', "wb")

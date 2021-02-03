@@ -34,25 +34,31 @@ dataset = loaded_object
 # y_test = dataset["y_test"]
 
 result = dataset["result"]
-print("result shape : ", result.shape)
-
-# result = dataset["result"]
+n_result = dataset["n_result"]
 print("result : ", result)
+print("n_result : ", n_result)
 print("result shpae : ", result.shape)
 
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]
 x_dataset = result.drop(["label"], axis=1)
+n_x_dataset = n_result.drop(["label"], axis=1)
+max_min_mean_median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
+max_min_mean = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std'], axis=1)
+max_min_mean_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median'], axis=1)
+max_min_mean_median = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std'], axis=1)
+mean_median_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'min', 'max'], axis=1)
+min_max = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std', 'mean'], axis=1)
 # print("x_dataset : ", x_dataset)
 # print("y_dataset : ", y_dataset)
-x_train, x_test, y_train, y_test = train_test_split(x_dataset,
+x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
                                                     y_dataset,
                                                     test_size=0.25,
                                                     shuffle=True,
                                                     stratify=y_dataset,
                                                     random_state=42)
-print("x_train : ", x_train)
-print("x_test : ", x_test)
+# print("x_train : ", x_train)
+# print("x_test : ", x_test)
 clf = xgb.sklearn.XGBClassifier(n_estimators=100,
                                 max_depth=10,
                                 learning_rate=0.3,
