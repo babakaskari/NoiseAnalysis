@@ -36,13 +36,13 @@ def evaluate_preds(model, x_train, y_train,  x_true, y_true):
     print(f"F1 Score : {f1: .2f}")
     print("Score:", metrics.accuracy_score(y_true, y_preds))
     print("Model score is : ", model.score(x_true, y_true))
-    confiusion_matrix_value = confusion_matrix(y_true, y_preds)
-    print("Confiusion Matrix : ", confiusion_matrix_value)
+    confusion_matrix_value = confusion_matrix(y_true, y_preds)
+    print("Confusion Matrix : \n ", confusion_matrix_value)
     plot_confusion_matrix(model, x_true, y_true)
     plt.show()
     # print(np.mean(y_test == y_pred))
-    pred_probality = model.predict_proba(x_true)
-    # print("Predict probability : ", pred_probality)
+    pred_probability = model.predict_proba(x_true)
+    # print("Predict probability : ", pred_probability)
     # cross_validation score
     cross_validation_score = cross_val_score(model, x_train, y_train, cv=6)
     print("Cross validation score : ", cross_validation_score)
@@ -51,8 +51,8 @@ def evaluate_preds(model, x_train, y_train,  x_true, y_true):
     cross_val_accuracy = np.mean(cross_validation_score) * 100
     print("cross validation accuracy : ", cross_val_accuracy)
     # ROC
-    # print("pred_probality : ", pred_probality, "length of prediction prob : ", len(pred_probality))
-    y_probs_positive = pred_probality[:, 1]
+    # print("pred_probability : ", pred_probability, "length of prediction prob : ", len(pred_probability))
+    y_probs_positive = pred_probability[:, 1]
     # print("y_probs_positive : ", y_probs_positive)
     fpr, tpr, thresholds = roc_curve(y_true, y_probs_positive)
     print("fpr : ", fpr)

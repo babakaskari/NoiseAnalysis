@@ -19,8 +19,8 @@ from xgboost import XGBClassifier
 # sys.path.insert(0, "C:\\Graphviz")
 # sns.set()
 
-file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
-# file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
+# file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
+file_to_read = open('/home/mohammed/pickle/preprocessed_dataset_n500.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)
@@ -35,9 +35,9 @@ dataset = loaded_object
 
 result = dataset["result"]
 n_result = dataset["n_result"]
-print("result : ", result)
-print("n_result : ", n_result)
-print("result shpae : ", result.shape)
+print("result : \n", result)
+print("n_result : \n", n_result)
+print("result shape : \n", result.shape)
 
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]
@@ -45,13 +45,16 @@ x_dataset = result.drop(["label"], axis=1)
 n_x_dataset = n_result.drop(["label"], axis=1)
 max_min_mean_median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
 max_min_mean = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std'], axis=1)
-max_min_mean_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median'], axis=1)
-max_min_mean_median = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std'], axis=1)
-mean_median_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'min', 'max'], axis=1)
+max_min_mean_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median'], axis=1)
+max_min_mean_median = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std'], axis=1)
+mean_median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'min', 'max'], axis=1)
 min_max = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std', 'mean'], axis=1)
+mean_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'min', 'max'], axis=1)
+median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'mean', 'min', 'max'], axis=1)
+min_max_median = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std', 'mean'], axis=1)
 # print("x_dataset : ", x_dataset)
 # print("y_dataset : ", y_dataset)
-x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
+x_train, x_test, y_train, y_test = train_test_split(max_min_mean_std,
                                                     y_dataset,
                                                     test_size=0.25,
                                                     shuffle=True,
@@ -61,9 +64,9 @@ x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
 # print("x_test : ", x_test)
 clf = xgb.sklearn.XGBClassifier(n_estimators=100,
                                 max_depth=10,
-                                learning_rate=0.3,
+                                learning_rate=0.1,
                                 subsample=0.8,
-                                colsample_bytree=0.8,
+                                colsample_bytree=0.5,
                                 booster="gbtree",
                                 eval_metric="error",
                                 scale_pos_weight=5,
