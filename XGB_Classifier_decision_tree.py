@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import plot_confusion_matrix
 import sys
 import evaluator
-import hyperparameter_tuning
+import hyperparameter_tuner
 from sklearn.metrics import roc_curve
 import seaborn as sns
 import xgboost as xgb
@@ -74,7 +74,7 @@ x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
 #                                 scale_pos_weight=5,
 #                                 seed=42)
 clf = xgb.sklearn.XGBClassifier(n_estimators=100, booster="gblinear")
-params = hyperparameter_tuning.xgb_hyperparameter_tuner(clf, x_train, y_train)
+params = hyperparameter_tuner.xgb_hyperparameter_tuner(clf, x_train, y_train)
 clf.set_params(**params)
 clf.fit(x_train, y_train)
 # xgb_pred = clf.predict(x_test)
