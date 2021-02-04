@@ -67,8 +67,8 @@ x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
 # print("x_test : ", x_test)
 
 clf = KNeighborsClassifier(n_neighbors=5)
-# params = hyperparameter_tuner.knn_hyperparameter_tuner(clf, x_train, y_train)
-# clf.set_params(**params)
+params = hyperparameter_tuner.knn_hyperparameter_tuner(clf, x_train, y_train)
+clf.set_params(**params)
 clf.fit(x_train, y_train)
 
 evaluator.evaluate_preds(clf, x_train, y_train, x_test, y_test)
