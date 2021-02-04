@@ -7,10 +7,11 @@ import time
 from matplotlib import dates as mpl_dates
 import sklearn
 from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import plot_confusion_matrix
 import sys
 import evaluator
-import hyperparameter_tuning
+import hyperparameter_tuner
 from sklearn.metrics import roc_curve
 import seaborn as sns
 import xgboost as xgb
@@ -64,32 +65,12 @@ x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
                                                     random_state=42)
 # print("x_train : ", x_train)
 # print("x_test : ", x_test)
-# clf = xgb.sklearn.XGBClassifier(n_estimators=100,
-#                                 max_depth=10,
-#                                 learning_rate=0.3,
-#                                 subsample=0.8,
-#                                 colsample_bytree=0.8,
-#                                 booster="gbtree",
-#                                 eval_metric="error",
-#                                 scale_pos_weight=5,
-#                                 seed=42)
-clf = xgb.sklearn.XGBClassifier(n_estimators=100, booster="gblinear")
-params = hyperparameter_tuning.xgb_hyperparameter_tuner(clf, x_train, y_train)
-clf.set_params(**params)
+
+clf = KNeighborsClassifier(n_neighbors=5)
+# params = hyperparameter_tuner.knn_hyperparameter_tuner(clf, x_train, y_train)
+# clf.set_params(**params)
 clf.fit(x_train, y_train)
-# xgb_pred = clf.predict(x_test)
 
 evaluator.evaluate_preds(clf, x_train, y_train, x_test, y_test)
 
-plt.figure(figsize=(20, 15))
-xgb.plot_importance(clf, ax=plt.gca())
-plt.show()
-# plt.figure(figsize=(20, 15))
-# xgb.plot_tree(clf, ax=plt.gca())
-# plt.show()
-# print("Number of boosting trees: {}".format(clf.n_estimators))
-# print("Max depth of trees: {}".format(clf.max_depth))
-# print("Objective function: {}".format(clf.objective))
-# plot_tree(clf, num_trees=10)
-plt.show()
 

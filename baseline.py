@@ -363,6 +363,7 @@ def keras_model(inputDim):
     define the keras model
     the model based on the simple dense auto encoder (64*64*8*64*64)
     """
+    print("input dimention : ", inputDim)
     inputLayer = Input(shape=(inputDim,))
     h = Dense(64, activation="relu")(inputLayer)
     h = Dense(64, activation="relu")(h)
