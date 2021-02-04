@@ -55,7 +55,7 @@ def evaluate_preds(model, x_train, y_train,  x_true, y_true):
     y_probs_positive = pred_probability[:, 1]
     # print("y_probs_positive : ", y_probs_positive)
     fpr, tpr, thresholds = roc_curve(y_true, y_probs_positive)
-    print("fpr : ", fpr)
+    # print("fpr : ", fpr)
     print("roc_auc_score : ", roc_auc_score(y_true, y_probs_positive))
     plt.plot(fpr, tpr, color="orange", label="ROC")
     plt.plot([0, 1], [0, 1], color="darkblue", linestyle="--", label="Guessing")
