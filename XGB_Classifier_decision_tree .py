@@ -38,7 +38,7 @@ result = dataset["result"]
 n_result = dataset["n_result"]
 print("result : \n", result)
 print("n_result : \n", n_result)
-print("result shapae : \n", result.shape)
+print("result shape : \n", result.shape)
 
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]
