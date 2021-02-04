@@ -1,0 +1,16 @@
+data_split:
+  test_size : 0.3
+  shuffle : True
+  stratify : y_dataset
+  random_state : 42
+
+fit:
+  compile:
+    optimizer : adam
+    loss : mean_squared_error
+    metrics : [mse, mae, mape]
+  epochs : 10
+  batch_size : 50
+  shuffle : True
+  validation_split : 0.1
+  verbose : 1

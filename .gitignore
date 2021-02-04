@@ -10,3 +10,4 @@ data/
 /dataset/*
 *.bak
 *.py.bak
+*.txt
