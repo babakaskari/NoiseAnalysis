@@ -21,8 +21,8 @@ from xgboost import XGBClassifier
 # sys.path.insert(0, "C:\\Graphviz")
 # sns.set()
 
-file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
-# file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
+# file_to_read = open('.\\pickle\\preprocessed_dataset.pickle', "rb")
+file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)
@@ -39,7 +39,7 @@ result = dataset["result"]
 n_result = dataset["n_result"]
 print("result : \n", result)
 print("n_result : \n", n_result)
-print("result shapae : \n", result.shape)
+print("result shape : \n", result.shape)
 
 # clf = XGBClassifier()
 y_dataset = result.loc[:, ["label"]]

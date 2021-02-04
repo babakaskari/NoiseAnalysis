@@ -46,7 +46,7 @@ def knn_hyperparameter_tuner(model, x_train, y_train):
     knn_parameters = {    
         "algorithm": ["kd_tree", "auto", "ball_tree", "brute"], 
         "leaf_size": np.arange(10, 30, 10),     
-        "n_neighbors": np.arange(2, 4, 1),
+        "n_neighbors": np.arange(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
         "n_jobs": [-1],       
         }
     return GridSearchCVFunc(model, x_train, y_train, knn_parameters)
