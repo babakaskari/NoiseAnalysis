@@ -68,7 +68,7 @@ def xgb_hyperparameter_tuner(model, x_train, y_train):
         'max_depth': np.arange(3, 15, 1),
         'learning_rate': [0.01, 0.03, 0.05, 0.1, 0.3, 0.4, 0.5, 0.6, 0.7],
         'booster': ["gbtree", "gblinear", "dart"],
-        'eval_metric': ["map","error","auc"],
+        'eval_metric': ["map","error"],
         'subsample': [0.9, 1.0],
         'colsample_bytree': [0.9, 1.0], 
         'n_jobs': [-1],  
