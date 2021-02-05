@@ -7,7 +7,7 @@ from tqdm import tqdm
 def GridSearchCVFunc(kernel, x_train, y_train, param):
     g_search = GridSearchCV(estimator=kernel,
                         param_grid=param,
-                        cv=2, 
+                        cv=3,
                         n_jobs = -1,
                         verbose = 4)
     g_search.fit(x_train, y_train.values.ravel())
@@ -67,7 +67,8 @@ def xgb_hyperparameter_tuner(model, x_train, y_train):
         "n_estimators": np.arange(10, 30, 10),
         'max_depth': np.arange(3, 15, 1),
         'learning_rate': [0.01, 0.03, 0.05, 0.1, 0.3, 0.4, 0.5, 0.6, 0.7],
-        'booster': ["gbtree", "gblinear", "dart"],                        
+        'booster': ["gbtree", "gblinear", "dart"],
+        'eval_metric': ["map","error","auc"],
         'subsample': [0.9, 1.0],
         'colsample_bytree': [0.9, 1.0], 
         'n_jobs': [-1],  

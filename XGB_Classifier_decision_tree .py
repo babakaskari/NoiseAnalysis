@@ -44,7 +44,7 @@ print("result shape : \n", result.shape)
 y_dataset = result.loc[:, ["label"]]
 x_dataset = result.drop(["label"], axis=1)
 n_x_dataset = n_result.drop(["label"], axis=1)
-max_min_mean_median_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
+max_min_mean_median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
 max_min_mean = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std'], axis=1)
 max_min_mean_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median'], axis=1)
 max_min_mean_median = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std'], axis=1)
@@ -56,7 +56,7 @@ min_max_median = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std', '
 
 # print("x_dataset : ", x_dataset)
 # print("y_dataset : ", y_dataset)
-x_train, x_test, y_train, y_test = train_test_split(mean_median_std,
+x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
                                                     y_dataset,
                                                     test_size=0.25,
                                                     shuffle=True,
@@ -64,18 +64,18 @@ x_train, x_test, y_train, y_test = train_test_split(mean_median_std,
                                                     random_state=42)
 # print("x_train : ", x_train)
 # print("x_test : ", x_test)
-clf = xgb.sklearn.XGBClassifier(n_estimators=20,
-                                max_depth=3,
-                                learning_rate=0.3,
-                                subsample=0.9,
-                                colsample_bytree=1.0,
-                                booster="gbtree",
-                                eval_metric="error",
-                                verbosity= 0,
-                                n_jobs= -1)
-# clf = xgb.sklearn.XGBClassifier(n_estimators=100, booster="gblinear")
-# params = hyperparameter_tuner.xgb_hyperparameter_tuner(clf, x_train, y_train)
-# clf.set_params(**params)
+# clf = xgb.sklearn.XGBClassifier(n_estimators=20,
+#                                 max_depth=3,
+#                                 learning_rate=0.3,
+#                                 subsample=0.9,
+#                                 colsample_bytree=1.0,
+#                                 booster="gbtree",
+#                                 eval_metric="error",
+#                                 verbosity= 0,
+#                                 n_jobs= -1)
+clf = xgb.sklearn.XGBClassifier(n_estimators=100, booster="gblinear")
+params = hyperparameter_tuner.xgb_hyperparameter_tuner(clf, x_train, y_train)
+clf.set_params(**params)
 clf.fit(x_train, y_train)
 # xgb_pred = clf.predict(x_test)
 
