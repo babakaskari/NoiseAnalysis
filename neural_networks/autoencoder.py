@@ -21,7 +21,7 @@ import seaborn as sns
 sns.set()
 
 file_to_read = open('..\\pickle\\preprocessed_dataset_ann.pickle', "rb")
-# file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
+# file_to_read = open('/home/mohammed/pickle/preprocessed_dataset_ann_n500.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
 # print(loaded_object)

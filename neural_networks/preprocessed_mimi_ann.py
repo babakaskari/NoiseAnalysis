@@ -140,7 +140,7 @@ x_dataset = datset_constructor(dataset)
 # print("x_dataset : ", x_dataset)
 dataset_description = x_dataset.describe()
 dataset_description.to_csv("..\\result\\dataset_description_ann.csv", index=True)
-# dataset_description.to_csv("/home/mohammed/result/dataset_description_n500.csv", index=True)
+# dataset_description.to_csv("/home/mohammed/result/dataset_description_ann_n500.csv", index=True)
 
 # print("x_train : ", x_train)
 # print("x_test : ", x_test)
@@ -180,7 +180,7 @@ data_dict = {
 }
 
 f_t_write = open('..\\pickle\\preprocessed_dataset_ann.pickle', "wb")
-# f_t_write = open('/home/mohammed/pickle/preprocessed_dataset_n500.pickle', "wb")
+# f_t_write = open('/home/mohammed/pickle/preprocessed_dataset_ann_n500.pickle', "wb")
 pickle.dump(data_dict, f_t_write)
 f_t_write.close()
 # return datat_dict
