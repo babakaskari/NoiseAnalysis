@@ -3,6 +3,7 @@ data/
 /data
 /data/*
 /dataset
+/\neural networks/*.bak
 *.wav
 *.csv
 *.pickle
