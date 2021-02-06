@@ -23,6 +23,7 @@ import logging
 from tqdm import tqdm
 from sklearn import metrics
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 import librosa.display
 import matplotlib.pyplot as plt
 ########################################################################
@@ -44,16 +45,16 @@ formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
-# normal_files = sorted(glob.glob(".\\data\\normal\\*.wav"))
-normal_files = sorted(glob.glob("/home/mohammed/data/normal/*.wav"))
+normal_files = sorted(glob.glob("..\\data\\normal\\*.wav"))
+# normal_files = sorted(glob.glob("/home/mohammed/data/normal/*.wav"))
 
 normal_labels = numpy.zeros(len(normal_files))
 if len(normal_files) == 0:
     logger.exception("no_wav_data!!")
 
 # 02 abnormal list generate
-# abnormal_files = sorted(glob.glob(".\\data\\abnormal\\*.wav"))
-abnormal_files = sorted(glob.glob("/home/mohammed/data/abnormal/*.wav"))
+abnormal_files = sorted(glob.glob("..\\data\\abnormal\\*.wav"))
+# abnormal_files = sorted(glob.glob("/home/mohammed/data/abnormal/*.wav"))
 
 abnormal_labels = numpy.ones(len(abnormal_files))
 
@@ -135,21 +136,11 @@ dataset = pd.concat([pd.DataFrame(x_train), pd.DataFrame(x_test)], axis=0)
 
 dataset.drop(["index"], axis=1, inplace=True)
 # print("dataset : ", dataset)
-x_dataset = pd.DataFrame()
-x_dataset["min"] = dataset.min(axis=1)
-x_dataset["max"] = dataset.max(axis=1)
-x_dataset["mean"] = dataset.mean(axis=1)
-x_dataset["median"] = dataset.median(axis=1)
-x_dataset["quantile1"] = dataset.quantile(0.25)
-x_dataset["quantile2"] = dataset.quantile(0.5)
-x_dataset["quantile3"] = dataset.quantile(0.75)
-x_dataset["std"] = dataset.std(axis=1)
-x_dataset = x_dataset.reset_index()
-x_dataset.drop(["index"], axis=1, inplace=True)
+x_dataset = datset_constructor(dataset)
 # print("x_dataset : ", x_dataset)
 dataset_description = x_dataset.describe()
-# dataset_description.to_csv(".\\result\\dataset_description.csv", index=True)
-dataset_description.to_csv("/home/mohammed/result/dataset_description_n500.csv", index=True)
+dataset_description.to_csv("..\\result\\dataset_description_ann.csv", index=True)
+# dataset_description.to_csv("/home/mohammed/result/dataset_description_n500.csv", index=True)
 
 # print("x_train : ", x_train)
 # print("x_test : ", x_test)
@@ -157,9 +148,10 @@ y_dataset = pd.concat([pd.DataFrame(y_train), pd.DataFrame(y_test)], axis=0)
 y_dataset.columns = ['label']
 y_dataset = y_dataset.reset_index()
 y_dataset.drop(["index"], axis=1, inplace=True)
-scaler = StandardScaler()
-# # print(y_dataset)
-n_x_dataset = scaler.fit_transform(x_dataset)
+# scaler = StandardScaler()
+# n_x_dataset = scaler.fit_transform(x_dataset)
+min_max_scaler = MinMaxScaler()
+n_x_dataset = min_max_scaler.fit_transform(x_dataset)
 n_x_dataset = pd.DataFrame(n_x_dataset, columns=['min', 'max', 'mean', 'median', 'quantile1', 'quantile2', 'quantile3', 'std'])
 # print("n_x_dataset : ", n_x_dataset)
 y_dataset = y_dataset.applymap(int)
@@ -170,19 +162,25 @@ result = pd.concat([x_dataset, y_dataset], axis=1)
 n_result = pd.concat([n_x_dataset, y_dataset], axis=1)
 print(" result : \n", result)
 print(" n_result : \n", n_result)
+x_normal = n_result[n_result["label"] == 0]
+x_abnormal = n_result[n_result["label"] == 1].reset_index(drop=True)
+print("x_normal : ", x_normal)
+print("x_abnormal : ", x_abnormal)
 # print("x_dataset : ", x_dataset)
 # print("y_dataset : ", y_dataset)
 # print("result shape : ", result.shape)
 
 data_dict = {
+    'normal_data': x_normal,
+    'abnormal_data': x_abnormal,
     "x_dataset": x_dataset,
     "y_dataset": y_dataset,
     "result": result,
     "n_result": n_result,
 }
 
-# f_t_write = open('.\\pickle\\preprocessed_dataset.pickle', "wb")
-f_t_write = open('/home/mohammed/pickle/preprocessed_dataset_n500.pickle', "wb")
+f_t_write = open('..\\pickle\\preprocessed_dataset_ann.pickle', "wb")
+# f_t_write = open('/home/mohammed/pickle/preprocessed_dataset_n500.pickle', "wb")
 pickle.dump(data_dict, f_t_write)
 f_t_write.close()
 # return datat_dict

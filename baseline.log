@@ -24457,3 +24457,7 @@ Instructions for updating:
 Call initializer instance with the dtype argument instead of passing it to the constructor
 INFO: :AUC : 0.6088888888888888
 INFO: :all results -> ./result/result.yaml
+ERROR: :no_wav_data!!
+NoneType: None
+ERROR: :no_wav_data!!
+NoneType: None

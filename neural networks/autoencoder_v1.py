@@ -13,7 +13,7 @@ import seaborn as sns
 from sklearn import metrics
 sns.set()
 
-file_to_read = open('..\\pickle\\preprocessed_dataset.pickle', "rb")
+file_to_read = open('..\\pickle\\preprocessed_dataset_ann.pickle', "rb")
 # file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
@@ -29,33 +29,23 @@ dataset = loaded_object
 
 with open("initializer.yaml") as stream:
     param = yaml.safe_load(stream)
-result = dataset["result"]
-n_result = dataset["n_result"]
-print("result : \n", result)
-print("n_result : \n", n_result)
-print("result shapae : \n", result.shape)
-
-# clf = XGBClassifier()
-y_dataset = result.loc[:, ["label"]]
-x_dataset = result.drop(["label"], axis=1)
-n_x_dataset = n_result.drop(["label"], axis=1)
-max_min_mean_median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
-max_min_mean = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std'], axis=1)
-max_min_mean_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median'], axis=1)
-max_min_mean_median = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std'], axis=1)
-mean_median_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'min', 'max'], axis=1)
-min_max = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std', 'mean'], axis=1)
-mean_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'min', 'max'], axis=1)
-median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'mean', 'min', 'max'], axis=1)
-min_max_median = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std', 'mean'], axis=1)
+normal_data= dataset["normal_data"]
+abnormal_data = dataset["abnormal_data"]
+print("normal_data : \n", normal_data)
+print("abnormal_data : \n", abnormal_data)
+print("normal_data shapae : \n", normal_data.shape)
+y_normal = normal_data.loc[:, ['label']]
+x_normal = normal_data.drop(['label'], axis=1)
+y_abnormal = abnormal_data.loc[:, ['label']]
+x_abnormal = abnormal_data.drop(['label'], axis=1)
 
 # print("x_dataset : ", x_dataset)
 # print("y_dataset : ", y_dataset)
-x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
-                                                    y_dataset,
+x_train, x_test, y_train, y_test = train_test_split(normal_data,
+                                                    y_normal,
                                                     test_size=0.25,
                                                     shuffle=True,
-                                                    stratify=y_dataset,
+                                                    stratify=y_normal,
                                                     random_state=42)
 
 autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
