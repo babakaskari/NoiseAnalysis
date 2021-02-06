@@ -1,19 +1,26 @@
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.layers import Input, Dense
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+import matplotlib.pyplot as plt
 import tensorflow as tf
+tf.enable_eager_execution()
+import numpy as np
+import pandas as pd
 import yaml
 import autoencoder_model
 import neural_network_evaluator
 import visualiser
+import seaborn as sns
+sns.set()
 # import neural_network_evaluator
 # import visualiser
 
 import pickle
 import seaborn as sns
-from sklearn import metrics
+
 sns.set()
 
-file_to_read = open('..\\pickle\\preprocessed_dataset.pickle', "rb")
+file_to_read = open('..\\pickle\\preprocessed_dataset_ann.pickle', "rb")
 # file_to_read = open('/home/mohammed/pickle/preprocessed_dataset.pickle', "rb")
 loaded_object = pickle.load(file_to_read)
 file_to_read.close()
@@ -29,39 +36,60 @@ dataset = loaded_object
 
 with open("initializer.yaml") as stream:
     param = yaml.safe_load(stream)
-result = dataset["result"]
-n_result = dataset["n_result"]
-print("result : \n", result)
-print("n_result : \n", n_result)
-print("result shapae : \n", result.shape)
+datatset = dataset["n_result"]
 
-# clf = XGBClassifier()
-y_dataset = result.loc[:, ["label"]]
-x_dataset = result.drop(["label"], axis=1)
-n_x_dataset = n_result.drop(["label"], axis=1)
-max_min_mean_median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
-max_min_mean = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std'], axis=1)
-max_min_mean_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median'], axis=1)
-max_min_mean_median = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std'], axis=1)
-mean_median_std = x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'min', 'max'], axis=1)
-min_max = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'std', 'mean'], axis=1)
-mean_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'median', 'min', 'max'], axis=1)
-median_std = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'mean', 'min', 'max'], axis=1)
-min_max_median = n_x_dataset.drop(['quantile1', 'quantile2', 'quantile3', 'std', 'mean'], axis=1)
+# print("datatset : \n", datatset)
 
-# print("x_dataset : ", x_dataset)
-# print("y_dataset : ", y_dataset)
-x_train, x_test, y_train, y_test = train_test_split(max_min_mean_median_std,
+y_dataset = datatset.loc[:, ['label']]
+x_dataset = datatset.drop(['label'], axis=1)
+datatset = datatset.values
+# print("dataset : ", dataset)
+y_dataset = datatset[:, -1]
+x_dataset = datatset[:, 0:-1]
+x_train, x_test, y_train, y_test = train_test_split(
+                                                    x_dataset,
                                                     y_dataset,
-                                                    test_size=0.25,
+                                                    test_size=0.20,
                                                     shuffle=True,
                                                     stratify=y_dataset,
                                                     random_state=42)
+y_train = y_train.astype(bool)
+y_test = y_test.astype(bool)
+# print("y_train", y_train)
+# print("y_test", y_test)
+normal_train_data = x_train[~y_train]
+normal_test_data = x_test[~y_test]
 
-autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
-print("x_train input train shape: ", x_train.shape[1])
-print("output_shape  :   ", autoencoder.output_shape)
+abnormal_train_data = x_train[y_train]
+abnormal_test_data = x_test[y_test]
+# print("normal_train_data", normal_train_data)
+# print("abnormal_train_data", abnormal_train_data)
 
+plt.grid()
+plt.plot(np.arange(8), normal_train_data[0])
+plt.title("A Normal Machine")
+plt.show()
+
+plt.grid()
+plt.plot(np.arange(8), abnormal_train_data[0])
+plt.title("An Abnormal Machine")
+plt.show()
+input_dim = x_train.shape[1]
+autoencoder = autoencoder_model.AnomalyDetector(input_dim)
+
+# autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
+# print("x_train input train shape: ", x_train.shape[1])
+# print("output_shape  :   ", autoencoder.output_shape)
+autoencoder.compile(**param["fit"]["compile"])
+history = autoencoder.fit(
+            normal_train_data,
+            normal_train_data,
+            epochs=param["fit"]["epochs"],
+            batch_size=param["fit"]["batch_size"],
+            verbose=param["fit"]["verbose"],
+            # validation_split=param["fit"]["validation_split"],
+            validation_data=(x_test, x_test),
+            shuffle=True)
 # Model summary
 autoencoder.summary()
 
@@ -75,25 +103,58 @@ autoencoder.summary()
 # List all weight tensors
 # print("get_weights  :   ", model.get_weights())
 
-opt = tf.keras.optimizers.Adam(learning_rate=0.0001)
-# model.compile(loss='mse', optimizer=opt, metrics=['mse', 'mae', 'mape', 'cosine'])
-# autoencoder.compile(loss='mse', optimizer=opt, metrics=['mse', 'mae', 'mape'])
-autoencoder.compile(**param["fit"]["compile"])
-# autoencoder.compile(optimizer='adam', loss=losses.MeanSquaredError())
-# history = model.fit(x_train, y_train,epochs=5, batch_size=50, verbose=1)
-# //////////////////////////////////////
-history = autoencoder.fit(x_train,
-                          x_train,
-                          epochs=param["fit"]["epochs"],
-                          shuffle=param["fit"]["shuffle"],
-                          batch_size=param["fit"]["batch_size"],
-                          verbose=param["fit"]["verbose"],
-                          # validation_data=(x_test, x_test),
-                          validation_split=param["fit"]["validation_split"],
-                          )
-
 neural_network_evaluator.evaluate_ann(history)
 visualiser.train_val_loss_plotter(history)
 
+encoded_imgs = autoencoder.encoder(normal_test_data).numpy()
+decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
+plt.plot(normal_test_data[0], 'b')
+plt.plot(decoded_imgs[0], 'r')
+plt.fill_between(np.arange(8), decoded_imgs[0], normal_test_data[0], color='lightcoral' )
+plt.legend(labels=["Input", "Reconstruction", "Error"])
+plt.show()
 
+encoded_imgs = autoencoder.encoder(abnormal_test_data).numpy()
+decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
+
+plt.plot(abnormal_test_data[0], 'b')
+plt.plot(decoded_imgs[0], 'r')
+plt.fill_between(np.arange(8), decoded_imgs[0], abnormal_test_data[0], color='lightcoral' )
+plt.legend(labels=["Input", "Reconstruction", "Error"])
+plt.show()
+
+reconstructions = autoencoder.predict(normal_train_data)
+train_loss = tf.keras.losses.mae(reconstructions, normal_train_data)
+
+plt.hist(train_loss)
+plt.xlabel("Train loss")
+plt.ylabel("No of examples")
+plt.show()
+
+threshold = np.mean(train_loss) + np.std(train_loss)
+print("Threshold: ", threshold)
+
+reconstructions = autoencoder.predict(abnormal_test_data)
+test_loss = tf.keras.losses.mae(reconstructions, abnormal_test_data)
+
+plt.hist(test_loss, bins=50)
+plt.xlabel("Test loss")
+plt.ylabel("No of examples")
+plt.show()
+
+
+def predict(model, data, threshold):
+        reconstructions = model(data)
+        loss = tf.keras.losses.mae(reconstructions, data)
+        return tf.math.less(loss, threshold)
+
+
+def print_stats(predictions, labels):
+    print("Accuracy = {}".format(accuracy_score(labels, preds)))
+    print("Precision = {}".format(precision_score(labels, preds)))
+    print("Recall = {}".format(recall_score(labels, preds)))
+
+
+preds = predict(autoencoder, x_test, threshold)
+print_stats(preds, y_test)
 
