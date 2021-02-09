@@ -76,7 +76,7 @@ plt.plot(np.arange(8), abnormal_train_data[0])
 plt.title("An Abnormal Machine")
 plt.show()
 input_dim = x_train.shape[1]
-autoencoder = autoencoder_model.AnomalyDetectorTest(input_dim)
+autoencoder = autoencoder_model.AnomalyDetectorAutoencoder(input_dim)
 
 # autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
 # print("x_train input train shape: ", x_train.shape[1])

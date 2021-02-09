@@ -48,9 +48,9 @@ class AnomalyDetector(Model):
         return decoded
 
 
-class AnomalyDetectorTest(Model):
+class AnomalyDetectorAutoencoder(Model):
     def __init__(self, input_dim):
-        super(AnomalyDetectorTest, self).__init__()
+        super(AnomalyDetectorAutoencoder, self).__init__()
         self.encoder = tf.keras.Sequential([
           layers.Dense(8, activation="relu", input_shape=(input_dim,)),
           layers.Dense(6, activation="relu"),
