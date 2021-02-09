@@ -7,6 +7,7 @@ import pickle
 import os
 import sys
 import glob
+
 ########################################################################
 
 
@@ -25,6 +26,7 @@ from tqdm import tqdm
 from sklearn import metrics
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense
+from sklearn.metrics import accuracy_score, precision_score, recall_score
 ########################################################################
 
 
@@ -490,7 +492,7 @@ if __name__ == "__main__":
 
         # evaluation
         print("============== EVALUATION ==============")
-        y_pred = [0. for k in eval_labels]
+        y_pred = [0 for k in eval_labels]
         y_true = eval_labels
         print("eval_labels : ", eval_labels)
         print("y_pred : ", y_pred)
@@ -514,6 +516,9 @@ if __name__ == "__main__":
         score = metrics.roc_auc_score(y_true, y_pred)
         logger.info("AUC : {}".format(score))
         evaluation_result["AUC"] = float(score)
+        print("Accuracy = {}".format(accuracy_score(y_true, y_pred)))
+        print("Precision = {}".format(precision_score(y_true, y_pred)))
+        print("Recall = {}".format(recall_score(y_true, y_pred)))
         results[evaluation_result_key] = evaluation_result
         print("===========================")
 

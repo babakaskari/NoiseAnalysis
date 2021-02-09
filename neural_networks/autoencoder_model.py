@@ -47,21 +47,25 @@ class AnomalyDetector(Model):
         decoded = self.decoder(encoded)
         return decoded
 
-# class AnomalyDetector(Model):
-#     def __init__(self, input_dim):
-#         super(AnomalyDetector, self).__init__()
-#         self.encoder = tf.keras.Sequential([
-#           layers.Dense(32, activation="relu", input_shape=(input_dim,)),
-#           layers.Dense(16, activation="relu"),
-#           layers.Dense(8, activation="relu")])
-#
-#         self.decoder = tf.keras.Sequential([
-#           layers.Dense(16, activation="relu"),
-#           layers.Dense(32, activation="relu"),
-#           layers.Dense(8, activation="sigmoid")])
-#
-#     def call(self, x):
-#         encoded = self.encoder(x)
-#         decoded = self.decoder(encoded)
-#         return decoded
+
+class AnomalyDetectorTest(Model):
+    def __init__(self, input_dim):
+        super(AnomalyDetectorTest, self).__init__()
+        self.encoder = tf.keras.Sequential([
+          layers.Dense(8, activation="relu", input_shape=(input_dim,)),
+          layers.Dense(6, activation="relu"),
+          layers.Dense(6, activation="relu"),
+          layers.Dense(4, activation="relu"),
+          layers.Dense(2, activation="relu")])
+        self.decoder = tf.keras.Sequential([
+          layers.Dense(4, activation="relu"),
+          layers.Dense(6, activation="relu"),
+          layers.Dense(6, activation="relu"),
+          layers.Dense(8, activation="relu"),
+          layers.Dense(8, activation="sigmoid")])
+
+    def call(self, x):
+        encoded = self.encoder(x)
+        decoded = self.decoder(encoded)
+        return decoded
 

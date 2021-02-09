@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import yaml
 import autoencoder_model
-# import neural_network_evaluator
-# import visualiser
+import neural_network_evaluator
+import visualiser
 import seaborn as sns
 import pickle
 sns.set()
@@ -42,8 +42,6 @@ datatset = datatset.values
 # print("dataset : ", dataset)
 y_dataset = datatset[:, -1]
 x_dataset = datatset[:, 0:-1]
-# print("x_dataset :", x_dataset)
-# print("y_dataset :", y_dataset)
 x_train, x_test, y_train, y_test = train_test_split(
                                                     x_dataset,
                                                     y_dataset,
@@ -51,7 +49,6 @@ x_train, x_test, y_train, y_test = train_test_split(
                                                     shuffle=param["data_split"]["shuffle"],
                                                     stratify=y_dataset,
                                                     random_state=param["data_split"]["random_state"])
-
 # print("x_test : ", x_test)
 # print("y_test : ", y_test)
 y_train = y_train.astype(bool)
@@ -76,7 +73,7 @@ plt.plot(np.arange(8), abnormal_train_data[0])
 plt.title("An Abnormal Machine")
 plt.show()
 input_dim = x_train.shape[1]
-autoencoder = autoencoder_model.AnomalyDetectorTest(input_dim)
+autoencoder = autoencoder_model.AnomalyDetector(input_dim)
 
 # autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
 # print("x_train input train shape: ", x_train.shape[1])
@@ -107,8 +104,8 @@ autoencoder.summary()
 # List all weight tensors
 # print("get_weights  :   ", model.get_weights())
 
-# neural_network_evaluator.evaluate_ann(history)
-# visualiser.train_val_loss_plotter(history)
+neural_network_evaluator.evaluate_ann(history)
+visualiser.train_val_loss_plotter(history)
 
 encoded_imgs = autoencoder.encoder(normal_test_data).numpy()
 decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
@@ -135,9 +132,9 @@ plt.xlabel("Train loss")
 plt.ylabel("No of examples")
 plt.show()
 
-# threshold = np.mean(train_loss) + np.std(train_loss)
-# print(" threshold : ", np.mean(train_loss) + np.std(train_loss))
-threshold = param["threshold"]
+threshold = np.mean(train_loss) + np.std(train_loss)
+
+threshold = 0.015
 
 print("Threshold: ", threshold)
 
@@ -153,9 +150,7 @@ plt.show()
 def predict(model, data, threshold):
         reconstructions = model(data)
         loss = tf.keras.losses.mae(reconstructions, data)
-        # print("loss :", loss)
-        # return tf.math.less(loss, threshold)
-        return tf.math.less(threshold, loss)
+        return tf.math.less(loss, threshold)
 
 
 def print_stats(predictions, labels):
@@ -165,7 +160,6 @@ def print_stats(predictions, labels):
 
 
 preds = predict(autoencoder, x_test, threshold)
-
 # print("y_test : ", y_test)
 # print("preds : ", preds)
 print_stats(preds, y_test)
