@@ -6,10 +6,10 @@ from tqdm import tqdm
 
 def GridSearchCVFunc(kernel, x_train, y_train, param):
     g_search = GridSearchCV(estimator=kernel,
-                        param_grid=param,
-                        cv=3,
-                        n_jobs = -1,
-                        verbose = 4)
+                            param_grid=param,
+                            cv=3,
+                            n_jobs = -1,
+                            verbose = 4)
     g_search.fit(x_train, y_train.values.ravel())
     # print("model hypermarateres : ", model.get_params())
     print("Best hyperparameters : ", g_search.best_params_)
@@ -18,16 +18,16 @@ def GridSearchCVFunc(kernel, x_train, y_train, param):
 
 
 def rfr_hyperparameter_tuner(model, x_train, y_train):
-    RandomForestRegressor_parameters = {
+    random_forest_classifier_parameters = {
         "n_estimators": np.arange(100, 1000, 100),
-        "criterion": ['mse', 'mae'],
         "max_depth": [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, None],
         "min_samples_split": [2, 4, 6, 8, 10],                                      
         "min_samples_leaf": [1, 2, 4, 6, 8, 10],
-        "max_features": ['auto', 'sqrt'],
+        "max_features": ['auto', 'sqrt', 'log2', None],
+        'max_samples': [10, 20, 30, 40, 50, 60, 70, 80, 90, 100, None],
         "bootstrap": [True, False],
                     }
-    return GridSearchCVFunc(model, x_train, y_train, RandomForestRegressor_parameters)
+    return GridSearchCVFunc(model, x_train, y_train, random_forest_classifier_parameters)
 
     
 def svm_hyperparameter_tuner(model, x_train, y_train):    

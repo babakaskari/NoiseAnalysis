@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import yaml
 import autoencoder_model
-# import neural_network_evaluator
-# import visualiser
+import neural_network_evaluator
+import visualiser
 import seaborn as sns
 import pickle
 sns.set()
@@ -107,8 +107,8 @@ autoencoder.summary()
 # List all weight tensors
 # print("get_weights  :   ", model.get_weights())
 
-# neural_network_evaluator.evaluate_ann(history)
-# visualiser.train_val_loss_plotter(history)
+neural_network_evaluator.evaluate_ann(history)
+visualiser.train_val_loss_plotter(history)
 
 encoded_imgs = autoencoder.encoder(normal_test_data).numpy()
 decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
@@ -166,7 +166,7 @@ def print_stats(predictions, labels):
 
 preds = predict(autoencoder, x_test, threshold)
 
-# print("y_test : ", y_test)
-# print("preds : ", preds)
+print("y_test : ", y_test)
+print("preds : ", preds)
 print_stats(preds, y_test)
 
