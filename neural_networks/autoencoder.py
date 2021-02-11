@@ -166,7 +166,7 @@ def print_stats(predictions, labels):
 
 preds = predict(autoencoder, x_test, threshold)
 
-print("y_test : ", y_test)
-print("preds : ", preds)
+# print("y_test : ", y_test)
+# print("preds : ", preds)
 print_stats(preds, y_test)
 

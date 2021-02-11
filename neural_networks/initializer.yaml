@@ -8,11 +8,12 @@ fit:
   compile:
     optimizer : Adam
     loss : mean_squared_error
-    metrics : [mse, mae, mape]
-  epochs : 1000
-  batch_size : 100
+    metrics : [acc, mse, mae, mape]
+  epochs : 200
+  batch_size : 10
   shuffle : True
   validation_split : 0.1
   verbose : 1
 
 threshold: 0.15
+

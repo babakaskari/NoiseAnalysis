@@ -69,3 +69,16 @@ class AnomalyDetectorAutoencoder(Model):
         decoded = self.decoder(encoded)
         return decoded
 
+
+def autoencoder_anomaly_detection(input_dim):
+    input_layer = Input(shape=(input_dim, ))
+    encoder = Dense(8, activation="relu")(input_layer)
+    encoder = Dense(6, activation="relu")(encoder)
+    encoder = Dense(4, activation="relu")(encoder)
+    encoder = Dense(2, activation="relu")(encoder)
+    decoder = Dense(4, activation="relu")(encoder)
+    decoder = Dense(6, activation="relu")(decoder)
+    decoder = Dense(input_dim, activation="sigmoid")(decoder)
+    autoencoder = Model(inputs=input_layer, outputs=decoder)
+    return autoencoder
+
