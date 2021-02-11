@@ -13,3 +13,5 @@ data/
 *.py.bak
 *.txt
 /neural_networks./logs/*
+/logs/*
+/logs/
