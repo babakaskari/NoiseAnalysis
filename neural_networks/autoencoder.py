@@ -3,6 +3,7 @@ from tensorflow.keras.layers import Input, Dense
 from sklearn.metrics import accuracy_score, precision_score, recall_score
 import matplotlib.pyplot as plt
 import tensorflow as tf
+from sklearn.metrics import confusion_matrix
 tf.enable_eager_execution()
 import numpy as np
 import pandas as pd
@@ -169,4 +170,7 @@ preds = predict(autoencoder, x_test, threshold)
 # print("y_test : ", y_test)
 # print("preds : ", preds)
 print_stats(preds, y_test)
+
+confusion_matrix_value = confusion_matrix(y_test, preds)
+print("Confusion Matrix : \n ", confusion_matrix_value)
 

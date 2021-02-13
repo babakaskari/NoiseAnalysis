@@ -17,3 +17,7 @@ fit:
 
 threshold: 0.15
 
+threshold_fixed: 0.1
+
+LABEL: [Normal, Abnormal]
+

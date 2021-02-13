@@ -1,12 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.semi_supervised import LabelPropagation
-from sklearn.preprocessing import OneHotEncoder
-import sklearn
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn import preprocessing, metrics
-from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score, max_error
+from sklearn.metrics import recall_score, classification_report, auc, roc_curve
 from sklearn.metrics import confusion_matrix, precision_recall_curve
 import matplotlib.pyplot as plt
 import yaml
@@ -49,21 +43,62 @@ def train_val_loss_plotter(history):
     plt.show()
 
 
-def precision_recall_plotter(x_valid, valid_prediction, df_valid, history):
+def precision_recall_plotter(error_df):
     # mse = np.mean(np.power(df_valid_x_rescaled - valid_x_predictions, 2), axis=1)
-
-    mse = np.mean(np.power(x_valid - valid_prediction, 2), axis=1)
-
-    error_df = pd.DataFrame({'Reconstruction_error': mse,
-                             'True_class': df_valid})
-    # print("error_def : ", error_df)
-    precision_rt, recall_rt, threshold_rt = precision_recall_curve(error_df.True_class, error_df.Reconstruction_error)
-    print("Precision : ", precision_rt)
-    print("Recall : ", recall_rt)
-    plt.plot(threshold_rt, precision_rt[1:], label="Precision", linewidth=5)
-    plt.plot(threshold_rt, recall_rt[1:], label="Recall", linewidth=5)
+    print("error_def : ", error_df)
+    precision, recall, threshold = precision_recall_curve(error_df.True_class, error_df.Reconstruction_error)
+    print("Precision : ", precision)
+    print("Recall : ", recall)
+    print("Threshold : ", threshold)
+    plt.plot(threshold, precision[1:], label="Precision", linewidth=5)
+    plt.plot(threshold, recall[1:], label="Recall", linewidth=5)
     plt.title('Precision and recall for different threshold values')
     plt.xlabel('Threshold')
     plt.ylabel('Precision/Recall')
     plt.legend()
     plt.show()
+
+
+def confusion_matrix_plotter(threshold_fixed, LABELS, error_df):
+    pred_y = [1 if e > threshold_fixed else 0 for e in error_df.Reconstruction_error.values]
+    conf_matrix = confusion_matrix(error_df.True_class, pred_y)
+    plt.figure(figsize=(12, 12))
+    sns.heatmap(conf_matrix, xticklabels=LABELS, yticklabels=LABELS, annot=True, fmt="d");
+    plt.title("Confusion matrix")
+    plt.ylabel('True class')
+    plt.xlabel('Predicted class')
+    plt.show()
+
+
+def test_plotter(threshold_fixed, x_test, test_prediction, df_test):
+    mse = np.mean(np.power(x_test - test_prediction, 2), axis=1)
+    error_df_test = pd.DataFrame({'Reconstruction_error': mse,
+                                  'True_class': df_test})
+    error_df_test = error_df_test.reset_index()
+
+    groups = error_df_test.groupby('True_class')
+    fig, ax = plt.subplots()
+    for name, group in groups:
+        ax.plot(group.index, group.Reconstruction_error, marker='o', ms=3.5, linestyle='',
+                label="Break" if name == 1 else "Normal")
+    ax.hlines(threshold_fixed, ax.get_xlim()[0], ax.get_xlim()[1], colors="r", zorder=100, label='Threshold')
+    ax.legend()
+    plt.title("Reconstruction error for different classes")
+    plt.ylabel("Reconstruction error")
+    plt.xlabel("Data point index")
+    plt.show()
+
+
+def auc_roc_curved(error_df):
+    false_pos_rate, true_pos_rate, thresholds = roc_curve(error_df.True_class, error_df.Reconstruction_error)
+    roc_auc = auc(false_pos_rate, true_pos_rate,)
+    plt.plot(false_pos_rate, true_pos_rate, linewidth=5, label='AUC = %0.3f'% roc_auc)
+    plt.plot([0, 1], [0, 1], linewidth=5)
+    plt.xlim([-0.01, 1])
+    plt.ylim([0, 1.01])
+    plt.legend(loc='lower right')
+    plt.title('Receiver operating characteristic curve (ROC)')
+    plt.ylabel('True Positive Rate')
+    plt.xlabel('False Positive Rate')
+    plt.show()
+

@@ -28,6 +28,9 @@ dataset = loaded_object
 
 with open("initializer.yaml") as stream:
     param = yaml.safe_load(stream)
+
+threshold_fixed = param["threshold_fixed"]
+LABELS = param["LABEL"]
 datatset = dataset["n_result"]
 
 df_train, df_test = train_test_split(datatset,
@@ -99,26 +102,19 @@ history = autoencoder.fit(
 autoencoder.encoder.summary()
 autoencoder.decoder.summary()
 autoencoder.summary()
+
 neural_network_evaluator.evaluate_ann(history)
 visualiser.train_val_loss_plotter(history)
 
 x_valid_predictions = autoencoder.predict(x_valid)
-visualiser.precision_recall_plotter(x_valid, x_valid_predictions, df_valid["label"], history)
+mse = np.mean(np.power(x_valid - x_valid_predictions, 2), axis=1)
 
-test_x_predictions = autoencoder.predict(df_test_x_rescaled)
-mse = np.mean(np.power(df_test_x_rescaled - test_x_predictions, 2), axis=1)
-error_df_test = pd.DataFrame({'Reconstruction_error': mse,
-                        'True_class': df_test['y']})
-error_df_test = error_df_test.reset_index()
-threshold_fixed = 0.4
-groups = error_df_test.groupby('True_class')
-fig, ax = plt.subplots()
-for name, group in groups:
-    ax.plot(group.index, group.Reconstruction_error, marker='o', ms=3.5, linestyle='',
-            label= "Break" if name == 1 else "Normal")
-ax.hlines(threshold_fixed, ax.get_xlim()[0], ax.get_xlim()[1], colors="r", zorder=100, label='Threshold')
-ax.legend()
-plt.title("Reconstruction error for different classes")
-plt.ylabel("Reconstruction error")
-plt.xlabel("Data point index")
-plt.show();
+error_df = pd.DataFrame({'Reconstruction_error': mse,
+                         'True_class': df_valid['label']})
+visualiser.precision_recall_plotter(error_df)
+visualiser.confusion_matrix_plotter(threshold_fixed, LABELS, error_df)
+
+test_x_predictions = autoencoder.predict(x_test)
+visualiser.test_plotter(threshold_fixed, x_test, test_x_predictions, df_test["label"])
+
+visualiser.auc_roc_curved(error_df)
