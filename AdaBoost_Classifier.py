@@ -67,7 +67,6 @@ clf = AdaBoostClassifier(n_estimators=100, random_state=0)
 # params = hyperparameter_tuner.adaboost_hyperparameter_tuner(clf, x_train, y_train)
 # clf.set_params(**params)
 
-clf = AdaBoostClassifier(n_estimators=100, random_state=0)
 clf.fit(x_train, y_train)
 
 evaluator.evaluate_preds(clf, x_train, y_train, x_test, y_test)
