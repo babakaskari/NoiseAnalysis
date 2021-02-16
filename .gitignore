@@ -12,6 +12,10 @@ data/
 *.bak
 *.py.bak
 *.txt
-/neural_networks./logs/*
+/neural_networks/logs/*
+neural_networks/logs/*
 /logs/*
 /logs/
+*.v2
+*.trace
+
