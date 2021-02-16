@@ -14,6 +14,10 @@ data/
 *.txt
 /neural_networks/logs/*
 neural_networks/logs/*
+neural_networks/logs
+neural_networks/logs/
+/neural_networks/logs
+/neural_networks/logs/
 /logs/*
 /logs/
 *.v2
