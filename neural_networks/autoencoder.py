@@ -1,9 +1,7 @@
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.layers import Input, Dense
-from sklearn.metrics import accuracy_score, precision_score, recall_score
-import matplotlib.pyplot as plt
 import tensorflow as tf
-from sklearn.metrics import confusion_matrix
+
 tf.enable_eager_execution()
 import numpy as np
 import pandas as pd
@@ -66,16 +64,9 @@ abnormal_train_data = x_train[y_train]
 abnormal_test_data = x_test[y_test]
 # print("normal_train_data", normal_train_data)
 # print("abnormal_train_data", abnormal_train_data)
+visualiser.vawe_plotter(normal_train_data, "A Normal Machine")
+visualiser.vawe_plotter(abnormal_train_data, "An Abnormal Machine")
 
-plt.grid()
-plt.plot(np.arange(8), normal_train_data[0])
-plt.title("A Normal Machine")
-plt.show()
-
-plt.grid()
-plt.plot(np.arange(8), abnormal_train_data[0])
-plt.title("An Abnormal Machine")
-plt.show()
 input_dim = x_train.shape[1]
 autoencoder = autoencoder_model.AnomalyDetectorAutoencoder(input_dim)
 
@@ -110,67 +101,21 @@ autoencoder.summary()
 
 neural_network_evaluator.evaluate_ann(history)
 visualiser.train_val_loss_plotter(history)
-
 encoded_imgs = autoencoder.encoder(normal_test_data).numpy()
 decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
-plt.plot(normal_test_data[0], 'b')
-plt.plot(decoded_imgs[0], 'r')
-plt.fill_between(np.arange(8), decoded_imgs[0], normal_test_data[0], color='lightcoral' )
-plt.legend(labels=["Input", "Reconstruction", "Error"])
-plt.show()
-
+visualiser.reconstruction_error(normal_test_data, decoded_imgs)
 encoded_imgs = autoencoder.encoder(abnormal_test_data).numpy()
 decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
-
-plt.plot(abnormal_test_data[0], 'b')
-plt.plot(decoded_imgs[0], 'r')
-plt.fill_between(np.arange(8), decoded_imgs[0], abnormal_test_data[0], color='lightcoral' )
-plt.legend(labels=["Input", "Reconstruction", "Error"])
-plt.show()
+visualiser.reconstruction_error(abnormal_test_data, decoded_imgs)
 
 reconstructions = autoencoder.predict(normal_train_data)
 train_loss = tf.keras.losses.mae(reconstructions, normal_train_data)
-
-plt.hist(train_loss)
-plt.xlabel("Train loss")
-plt.ylabel("No of examples")
-plt.show()
-
+visualiser.histogram_plotter(train_loss, "Train loss", "No of examples")
 # threshold = np.mean(train_loss) + np.std(train_loss)
 # print(" threshold : ", np.mean(train_loss) + np.std(train_loss))
-threshold = param["threshold"]
-
-print("Threshold: ", threshold)
-
 reconstructions = autoencoder.predict(abnormal_test_data)
 test_loss = tf.keras.losses.mae(reconstructions, abnormal_test_data)
-
-plt.hist(test_loss, bins=50)
-plt.xlabel("Test loss")
-plt.ylabel("No of examples")
-plt.show()
-
-
-def predict(model, data, threshold):
-        reconstructions = model(data)
-        loss = tf.keras.losses.mae(reconstructions, data)
-        # print("loss :", loss)
-        # return tf.math.less(loss, threshold)
-        return tf.math.less(threshold, loss)
-
-
-def print_stats(predictions, labels):
-    print("Accuracy = {}".format(accuracy_score(labels, predictions)))
-    print("Precision = {}".format(precision_score(labels, predictions)))
-    print("Recall = {}".format(recall_score(labels, predictions)))
-
-
-preds = predict(autoencoder, x_test, threshold)
-
-# print("y_test : ", y_test)
-# print("preds : ", preds)
-print_stats(preds, y_test)
-
-confusion_matrix_value = confusion_matrix(y_test, preds)
-print("Confusion Matrix : \n ", confusion_matrix_value)
-
+visualiser.histogram_plotter(test_loss, "Test loss", "No of examples")
+threshold = param["threshold"]
+print("Threshold: ", threshold)
+neural_network_evaluator.prediction(autoencoder, x_test, y_test, threshold)

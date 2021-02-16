@@ -4,13 +4,7 @@ from sklearn.metrics import recall_score, classification_report, auc, roc_curve
 from sklearn.metrics import confusion_matrix, precision_recall_curve
 import matplotlib.pyplot as plt
 import yaml
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
-from sklearn.metrics import plot_confusion_matrix
-from sklearn.metrics import roc_curve
-from sklearn.metrics import roc_auc_score
+
 import warnings
 import seaborn as sns
 sns.set()
@@ -45,7 +39,7 @@ def train_val_loss_plotter(history):
 
 def precision_recall_plotter(error_df):
     # mse = np.mean(np.power(df_valid_x_rescaled - valid_x_predictions, 2), axis=1)
-    print("error_def : ", error_df)
+    # print("error_def : ", error_df)
     precision, recall, threshold = precision_recall_curve(error_df.True_class, error_df.Reconstruction_error)
     print("Precision : ", precision)
     print("Recall : ", recall)
@@ -89,6 +83,29 @@ def test_plotter(threshold_fixed, x_test, test_prediction, df_test):
     plt.show()
 
 
+def reconstruction_error(data, decoded_imgs):
+
+    plt.plot(data[0], 'b')
+    plt.plot(decoded_imgs[0], 'r')
+    plt.fill_between(np.arange(8), decoded_imgs[0], data[0], color='lightcoral')
+    plt.legend(labels=["Input", "Reconstruction", "Error"])
+    plt.show()
+
+
+def histogram_plotter(loss, x_label, y_label):
+    plt.hist(loss, bins=50)
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.show()
+
+
+def vawe_plotter(data, chart_title):
+    plt.grid()
+    plt.plot(np.arange(8), data[0])
+    plt.title(chart_title)
+    plt.show()
+
+
 def auc_roc_curved(error_df):
     false_pos_rate, true_pos_rate, thresholds = roc_curve(error_df.True_class, error_df.Reconstruction_error)
     roc_auc = auc(false_pos_rate, true_pos_rate,)
@@ -101,4 +118,3 @@ def auc_roc_curved(error_df):
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
     plt.show()
-

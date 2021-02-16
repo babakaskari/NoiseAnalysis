@@ -1,19 +1,10 @@
-import pandas as pd
-import numpy as np
-from sklearn.semi_supervised import LabelPropagation
-from sklearn.preprocessing import OneHotEncoder
+
 import tensorflow as tf
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.metrics import confusion_matrix
 import sklearn
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn import preprocessing, metrics
-from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score, max_error
+from sklearn.metrics import recall_score, classification_report, auc, roc_curve
 import matplotlib.pyplot as plt
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import cross_val_predict
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
-from sklearn.metrics import plot_confusion_matrix
 from sklearn.metrics import roc_curve
 from sklearn.metrics import roc_auc_score
 # tf.keras.losses.MeanSquaredError(
@@ -40,7 +31,40 @@ def evaluate_ann(history):
     print("Val Mean Absolute Percentage Error : ", history.history['val_mean_absolute_percentage_error'])
     # plot metrics
 
- 
+
+def predict(model, data, thresholds):
+    reconstruction = model(data)
+    loss = tf.keras.losses.mae(reconstruction, data)
+    # print("loss :", loss)
+    # return tf.math.less(loss, threshold)
+    return tf.math.less(thresholds, loss)
+
+
+def print_stats(predictions, labels):
+    print("Accuracy = {}".format(accuracy_score(labels, predictions)))
+    print("Precision = {}".format(precision_score(labels, predictions)))
+    print("Recall = {}".format(recall_score(labels, predictions)))
+
+
+def prediction(autoencoder, x_test, y_test, threshold):
+    preds = predict(autoencoder, x_test, threshold)
+    # print("y_test : ", y_test)
+    # print("preds : ", preds)
+    print_stats(preds, y_test)
+    print(preds)
+    confusion_matrix_value = confusion_matrix(y_test, preds)
+    print("Confusion Matrix : \n ", confusion_matrix_value)
+    print("roc_auc_score : ", roc_auc_score(y_test, preds))
+    fpr, tpr, thresholds = roc_curve(y_test, preds)
+    plt.plot(fpr, tpr, color="orange", label="ROC")
+    plt.plot([0, 1], [0, 1], color="darkblue", linestyle="--", label="Guessing")
+    plt.xlabel("False positive rate (fpr)")
+    plt.ylabel("True positive rate (tpr)")
+    plt.title("Receiver Operating Characteristic (ROC) Curve")
+    plt.legend()
+    plt.show()
+
+
 
 
 
