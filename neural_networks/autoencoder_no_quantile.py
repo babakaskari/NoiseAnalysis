@@ -32,8 +32,8 @@ dataset = loaded_object
 with open("initializer.yaml") as stream:
     param = yaml.safe_load(stream)
 datatset = dataset["n_result"]
-
-print("datatset : \n", datatset)
+datatset = datatset.drop(['quantile1', 'quantile2', 'quantile3'], axis=1)
+# print("datatset : \n", datatset)
 
 # y_dataset = datatset.loc[:, ['label']]
 # x_dataset = datatset.drop(['label'], axis=1)
@@ -64,11 +64,13 @@ abnormal_train_data = x_train[y_train]
 abnormal_test_data = x_test[y_test]
 # print("normal_train_data", normal_train_data)
 # print("abnormal_train_data", abnormal_train_data)
-visualiser.wave_plotter(normal_train_data, "A Normal Machine")
-visualiser.wave_plotter(abnormal_train_data, "An Abnormal Machine")
-
 input_dim = x_train.shape[1]
-autoencoder = autoencoder_model.AnomalyDetectorAutoencoder(input_dim)
+visualiser.wave_plotter(normal_train_data, "A Normal Machine", input_dim)
+visualiser.wave_plotter(abnormal_train_data, "An Abnormal Machine", input_dim)
+
+
+# autoencoder = autoencoder_model.AnomalyDetectorAutoencoder(input_dim)
+autoencoder = autoencoder_model.AnomalyDetectorAutoencoder_No_Q(input_dim)
 
 # autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
 # print("x_train input train shape: ", x_train.shape[1])
@@ -103,10 +105,10 @@ neural_network_evaluator.evaluate_ann(history)
 visualiser.train_val_loss_plotter(history)
 encoded_imgs = autoencoder.encoder(normal_test_data).numpy()
 decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
-visualiser.reconstruction_error(normal_test_data, decoded_imgs)
+visualiser.reconstruction_error(normal_test_data, decoded_imgs, input_dim)
 encoded_imgs = autoencoder.encoder(abnormal_test_data).numpy()
 decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
-visualiser.reconstruction_error(abnormal_test_data, decoded_imgs)
+visualiser.reconstruction_error(abnormal_test_data, decoded_imgs, input_dim)
 
 reconstructions = autoencoder.predict(normal_train_data)
 train_loss = tf.keras.losses.mae(reconstructions, normal_train_data)

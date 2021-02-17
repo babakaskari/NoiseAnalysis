@@ -83,11 +83,11 @@ def test_plotter(threshold_fixed, x_test, test_prediction, df_test):
     plt.show()
 
 
-def reconstruction_error(data, decoded_imgs):
+def reconstruction_error(data, decoded_imgs, dim):
 
     plt.plot(data[0], 'b')
     plt.plot(decoded_imgs[0], 'r')
-    plt.fill_between(np.arange(8), decoded_imgs[0], data[0], color='lightcoral')
+    plt.fill_between(np.arange(dim), decoded_imgs[0], data[0], color='lightcoral')
     plt.legend(labels=["Input", "Reconstruction", "Error"])
     plt.show()
 
@@ -99,9 +99,9 @@ def histogram_plotter(loss, x_label, y_label):
     plt.show()
 
 
-def vawe_plotter(data, chart_title):
+def wave_plotter(data, chart_title, dim):
     plt.grid()
-    plt.plot(np.arange(8), data[0])
+    plt.plot(np.arange(dim), data[0])
     plt.title(chart_title)
     plt.show()
 

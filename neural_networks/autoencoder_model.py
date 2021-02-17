@@ -7,15 +7,19 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout, Masking, Embedding
 
 def anomaly_detector(input):
     inputlayer = Input(shape=(input,))
-    print("input layer : ", inputlayer)
-    print("input  : ", input)
-    model_layer = Dense(64, activation="relu")(inputlayer)
-    model_layer = Dense(64, activation="relu")(model_layer)
+    model_layer = Dense(8, activation="relu")(inputlayer)
+    model_layer = Dense(6, activation="relu")(model_layer)
+    model_layer = Dense(6, activation="relu")(model_layer)
+    model_layer = Dense(4, activation="relu")(model_layer)
+    model_layer = Dense(2, activation="relu")(model_layer)
+    model_layer = Dense(1, activation="relu")(model_layer)
+    model_layer = Dense(2, activation="relu")(model_layer)
+    model_layer = Dense(4, activation="relu")(model_layer)
+    model_layer = Dense(6, activation="relu")(model_layer)
+    model_layer = Dense(6, activation="relu")(model_layer)
     model_layer = Dense(8, activation="relu")(model_layer)
-    model_layer = Dense(64, activation="relu")(model_layer)
-    model_layer = Dense(64, activation="relu")(model_layer)
-    model_layer = Dense(input, activation="sigmoid")(model_layer)
-    print("model_layer : ", model_layer)
+    model_layer = Dense(input, activation="linear")(model_layer)
+    # print("model_layer : ", model_layer)
     return Model(inputs=inputlayer, outputs=model_layer)
 
 
@@ -62,7 +66,7 @@ class AnomalyDetectorAutoencoder(Model):
           layers.Dense(6, activation="relu"),
           layers.Dense(6, activation="relu"),
           layers.Dense(8, activation="relu"),
-          layers.Dense(8, activation="sigmoid")])
+          layers.Dense(input_dim, activation="sigmoid")])
 
     def call(self, x):
         encoded = self.encoder(x)
@@ -81,4 +85,26 @@ def autoencoder_anomaly_detection(input_dim):
     decoder = Dense(input_dim, activation="sigmoid")(decoder)
     autoencoder = Model(inputs=input_layer, outputs=decoder)
     return autoencoder
+
+
+class AnomalyDetectorAutoencoder_No_Q(Model):
+    def __init__(self, input_dim):
+        super(AnomalyDetectorAutoencoder_No_Q, self).__init__()
+        self.encoder = tf.keras.Sequential([
+          layers.Dense(5, activation="relu", input_shape=(input_dim,)),
+          layers.Dense(4, activation="relu"),
+          layers.Dense(4, activation="relu"),
+          layers.Dense(3, activation="relu"),
+          layers.Dense(2, activation="relu")])
+        self.decoder = tf.keras.Sequential([
+          layers.Dense(3, activation="relu"),
+          layers.Dense(4, activation="relu"),
+          layers.Dense(4, activation="relu"),
+          layers.Dense(5, activation="relu"),
+          layers.Dense(input_dim, activation="sigmoid")])
+
+    def call(self, x):
+        encoded = self.encoder(x)
+        decoded = self.decoder(encoded)
+        return decoded
 

@@ -24546,3 +24546,23 @@ WARNING:tensorflow:From C:\Users\WINDOWS\.conda\envs\tenserflow_env\lib\site-pac
 Instructions for updating:
 Call initializer instance with the dtype argument instead of passing it to the constructor
 INFO: :AUC : 0.6088888888888888
+DEBUG:matplotlib.pyplot:Loaded backend qt5agg version unknown.
+DEBUG:matplotlib.pyplot:Loaded backend Qt5Agg version unknown.
+INFO: :load_pickle <- ./pickle/train_pump_id_00_-6_dB_pump.pickle
+INFO: :load_pickle <- ./pickle/eval_files_pump_id_00_-6_dB_pump.pickle
+INFO: :load_pickle <- ./pickle/eval_labels_pump_id_00_-6_dB_pump.pickle
+WARNING:tensorflow:From C:\Users\WINDOWS\.conda\envs\tenserflow_env\lib\site-packages\tensorflow\python\ops\init_ops.py:1251: calling VarianceScaling.__init__ (from tensorflow.python.ops.init_ops) with dtype is deprecated and will be removed in a future version.
+Instructions for updating:
+Call initializer instance with the dtype argument instead of passing it to the constructor
+INFO: :AUC : 0.6088888888888888
+INFO: :all results -> ./result/result.yaml
+DEBUG:matplotlib.pyplot:Loaded backend qt5agg version unknown.
+DEBUG:matplotlib.pyplot:Loaded backend Qt5Agg version unknown.
+INFO: :load_pickle <- ./pickle/train_pump_id_00_-6_dB_pump.pickle
+INFO: :load_pickle <- ./pickle/eval_files_pump_id_00_-6_dB_pump.pickle
+INFO: :load_pickle <- ./pickle/eval_labels_pump_id_00_-6_dB_pump.pickle
+WARNING:tensorflow:From C:\Users\WINDOWS\.conda\envs\tenserflow_env\lib\site-packages\tensorflow\python\ops\init_ops.py:1251: calling VarianceScaling.__init__ (from tensorflow.python.ops.init_ops) with dtype is deprecated and will be removed in a future version.
+Instructions for updating:
+Call initializer instance with the dtype argument instead of passing it to the constructor
+INFO: :AUC : 0.6088888888888888
+INFO: :all results -> ./result/result.yaml

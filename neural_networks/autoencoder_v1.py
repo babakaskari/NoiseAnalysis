@@ -43,13 +43,19 @@ y_dataset = datatset[:, -1]
 x_dataset = datatset[:, 0:-1]
 # print("x_dataset :", x_dataset)
 # print("y_dataset :", y_dataset)
-neg, pos = np.bincount(y_dataset['label'])
-total = neg + pos
-weight_for_0 = (1 / neg) * total / 2
-weight_for_1 = (1 / pos) * total / 2
-class_weight = {0: weight_for_0, 1: weight_for_1}
-print('weight for class 0', weight_for_0)
-print('weight for class 1', weight_for_1)
+# print(y_dataset.dtype)
+# y_dataset.astype(np.int64)
+#
+# print("y_dataset :", y_dataset)
+# neg, pos = int(np.bincount(y_dataset))
+#
+# print("pos ", pos)
+# total = neg + pos
+# weight_for_0 = (1 / neg) * total / 2
+# weight_for_1 = (1 / pos) * total / 2
+# class_weight = {0: weight_for_0, 1: weight_for_1}
+# print('weight for class 0', weight_for_0)
+# print('weight for class 1', weight_for_1)
 x_train, x_test, y_train, y_test = train_test_split(
                                                     x_dataset,
                                                     y_dataset,
@@ -71,12 +77,12 @@ abnormal_train_data = x_train[y_train]
 abnormal_test_data = x_test[y_test]
 # print("normal_train_data", normal_train_data)
 # print("abnormal_train_data", abnormal_train_data)
-visualiser.vawe_plotter(normal_train_data, "A Normal Machine")
-visualiser.vawe_plotter(abnormal_train_data, "An Abnormal Machine")
+visualiser.wave_plotter(normal_train_data, "A Normal Machine")
+visualiser.wave_plotter(abnormal_train_data, "An Abnormal Machine")
 
 input_dim = x_train.shape[1]
-autoencoder = autoencoder_model.AnomalyDetectorAutoencoder(input_dim)
-
+autoencoder = autoencoder_model.anomaly_detector(input_dim)
+autoencoder.summary()
 # autoencoder = autoencoder_model.anomaly_detector(x_train.shape[1], )
 # print("x_train input train shape: ", x_train.shape[1])
 # print("output_shape  :   ", autoencoder.output_shape)
@@ -91,8 +97,7 @@ history = autoencoder.fit(
             validation_data=(x_test, x_test),
             shuffle=param["fit"]["shuffle"])
 # Model summary
-autoencoder.encoder.summary()
-autoencoder.decoder.summary()
+
 autoencoder.summary()
 
 
@@ -108,11 +113,11 @@ autoencoder.summary()
 
 neural_network_evaluator.evaluate_ann(history)
 visualiser.train_val_loss_plotter(history)
-encoded_imgs = autoencoder.encoder(normal_test_data).numpy()
-decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
+decoded_imgs = autoencoder(normal_test_data).numpy()
+
 visualiser.reconstruction_error(normal_test_data, decoded_imgs)
-encoded_imgs = autoencoder.encoder(abnormal_test_data).numpy()
-decoded_imgs = autoencoder.decoder(encoded_imgs).numpy()
+decoded_imgs = autoencoder(abnormal_test_data).numpy()
+
 visualiser.reconstruction_error(abnormal_test_data, decoded_imgs)
 
 reconstructions = autoencoder.predict(normal_train_data)

@@ -29,6 +29,8 @@ def evaluate_ann(history):
     print("Val Mean Squared Erro : ", history.history['val_mean_squared_error'])
     print("Val Mean Absolute Error : ", history.history['val_mean_absolute_error'])
     print("Val Mean Absolute Percentage Error : ", history.history['val_mean_absolute_percentage_error'])
+    print("Train Loss : ", history.history["loss"][0])
+    print("Validation Loss : ", history.history["val_loss"][0])
     # plot metrics
 
 
