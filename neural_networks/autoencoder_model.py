@@ -1,8 +1,8 @@
 from tensorflow.keras.layers import Input, Dense
 import tensorflow as tf
-from tensorflow.keras import layers, losses
 from tensorflow.keras.models import Model
-from tensorflow.keras.layers import LSTM, Dense, Dropout, Masking, Embedding
+from tensorflow import keras
+from tensorflow.keras import layers
 
 
 def anomaly_detector(input):
@@ -108,3 +108,36 @@ class AnomalyDetectorAutoencoder_No_Q(Model):
         decoded = self.decoder(encoded)
         return decoded
 
+
+def autoencoder_lstm(dim1, dim2):
+    model = keras.Sequential()
+    model.add(keras.layers.LSTM(
+        units=64,
+        input_shape=(dim1, dim2)
+    ))
+    model.add(keras.layers.Dropout(rate=0.2))
+    model.add(keras.layers.RepeatVector(n=dim1))
+    model.add(keras.layers.LSTM(units=64, return_sequences=True))
+    model.add(keras.layers.Dropout(rate=0.2))
+    model.add(
+        keras.layers.TimeDistributed(
+            keras.layers.Dense(units=dim2)
+        )
+    )
+    return model
+
+
+def autoencoder_model(dim1, dim2):
+    input_layer = keras.Input(shape=(dim1, dim2))
+    # Encoder
+    encoder = layers.LSTM(8, activation="relu", return_sequences=True)(input_layer)
+    encoder = layers.LSTM(6, activation="relu", return_sequences=True)(encoder)
+    encoder = layers.LSTM(4, activation="relu", return_sequences=True)(encoder)
+    encoder = layers.LSTM(2, activation="relu", return_sequences=True)(encoder)
+    # Decoder
+    decoder = layers.LSTM(4, activation="relu", return_sequences=True)(encoder)
+    decoder = layers.LSTM(6, activation="relu", return_sequences=True)(decoder)
+    decoder = layers.LSTM(8, activation="relu", return_sequences=True)(decoder)
+    decoder = Dense(dim1, activation="sigmoid")(decoder)
+    model = Model(inputs=input_layer, outputs=decoder)
+    return model

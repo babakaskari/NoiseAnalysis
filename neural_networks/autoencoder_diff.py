@@ -109,8 +109,12 @@ visualiser.train_val_loss_plotter(history)
 x_valid_predictions = autoencoder.predict(x_valid)
 mse = np.mean(np.power(x_valid - x_valid_predictions, 2), axis=1)
 
+# ###########################
+
+
 error_df = pd.DataFrame({'Reconstruction_error': mse,
                          'True_class': df_valid['label']})
+
 visualiser.precision_recall_plotter(error_df)
 visualiser.confusion_matrix_plotter(threshold_fixed, LABELS, error_df)
 
