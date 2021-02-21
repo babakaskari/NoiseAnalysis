@@ -118,7 +118,9 @@ error_df = pd.DataFrame({'Reconstruction_error': mse,
 visualiser.precision_recall_plotter(error_df)
 visualiser.confusion_matrix_plotter(threshold_fixed, LABELS, error_df)
 
-test_x_predictions = autoencoder.predict(x_test)
-visualiser.test_plotter(threshold_fixed, x_test, test_x_predictions, df_test["label"])
+x_test_predictions = autoencoder.predict(x_test)
+visualiser.test_plotter(threshold_fixed, x_test, x_test_predictions, df_test["label"])
 
 visualiser.auc_roc_curved(error_df)
+
+

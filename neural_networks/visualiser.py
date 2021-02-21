@@ -117,6 +117,19 @@ def auc_roc_curved(error_df):
     plt.title('Receiver operating characteristic curve (ROC)')
     plt.ylabel('True Positive Rate')
     plt.xlabel('False Positive Rate')
+    print("AUS is  : ", roc_auc)
     plt.show()
 
 
+def lstm_train_val_loss_plotter(history, epoch):
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+    epochs = range(epoch)
+    plt.figure()
+    plt.plot(epochs, loss, 'b', c='red', label='Training loss')
+    plt.plot(epochs, val_loss, 'b', c='blue', label='Validation loss')
+    plt.title('Training and validation loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Loss')
+    plt.legend()
+    plt.show()

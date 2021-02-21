@@ -132,10 +132,14 @@ def autoencoder_model(dim1, dim2):
     # Encoder
     encoder = layers.LSTM(8, activation="relu", return_sequences=True)(input_layer)
     encoder = layers.LSTM(6, activation="relu", return_sequences=True)(encoder)
+    encoder = layers.LSTM(6, activation="relu", return_sequences=True)(encoder)
+    encoder = layers.LSTM(4, activation="relu", return_sequences=True)(encoder)
     encoder = layers.LSTM(4, activation="relu", return_sequences=True)(encoder)
     encoder = layers.LSTM(2, activation="relu", return_sequences=True)(encoder)
     # Decoder
     decoder = layers.LSTM(4, activation="relu", return_sequences=True)(encoder)
+    decoder = layers.LSTM(4, activation="relu", return_sequences=True)(decoder)
+    decoder = layers.LSTM(6, activation="relu", return_sequences=True)(decoder)
     decoder = layers.LSTM(6, activation="relu", return_sequences=True)(decoder)
     decoder = layers.LSTM(8, activation="relu", return_sequences=True)(decoder)
     decoder = Dense(dim1, activation="sigmoid")(decoder)
